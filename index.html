@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lukas Imbusch | Portfolio</title>
+<title>LukasImbusch | Portfolio</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -40,6 +40,25 @@ body{
     100%{background-position:0% 50%;}
 }
 
+.glow{
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:#3b82f6;
+    border-radius:50%;
+    filter:blur(180px);
+    opacity:.15;
+    top:-150px;
+    right:-150px;
+    pointer-events:none;
+    animation:pulse 8s infinite;
+}
+
+@keyframes pulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.3);}
+}
+
 .hero{
     min-height:100vh;
     display:flex;
@@ -57,7 +76,6 @@ body{
     padding:50px;
     width:90%;
     max-width:850px;
-
     animation:fadeUp 1.2s ease;
 }
 
@@ -79,20 +97,13 @@ body{
     margin:auto;
     margin-bottom:25px;
     border:4px solid rgba(255,255,255,0.3);
-
-    background:url("https://via.placeholder.com/300")
-    center/cover;
-
+    background:url("https://via.placeholder.com/300") center/cover;
     animation:float 4s ease-in-out infinite;
 }
 
 @keyframes float{
-    0%,100%{
-        transform:translateY(0);
-    }
-    50%{
-        transform:translateY(-15px);
-    }
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-15px);}
 }
 
 h1{
@@ -116,15 +127,12 @@ h1{
 .btn{
     position:relative;
     overflow:hidden;
-
     text-decoration:none;
     color:white;
     padding:15px 35px;
     border-radius:50px;
-
     background:rgba(255,255,255,0.12);
     border:1px solid rgba(255,255,255,0.2);
-
     transition:all .35s ease;
 }
 
@@ -187,8 +195,7 @@ h1{
         rotateX(5deg)
         rotateY(-5deg);
 
-    box-shadow:
-        0 20px 40px rgba(0,0,0,.3);
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
 }
 
 .project h3{
@@ -205,28 +212,16 @@ h1{
     color:#ddd;
 }
 
-.glow{
+/* TRAIN */
+
+#train{
     position:fixed;
-    width:500px;
-    height:500px;
-    background:#3b82f6;
-    border-radius:50%;
-    filter:blur(180px);
-    opacity:.15;
-    top:-150px;
-    right:-150px;
+    left:100px;
+    top:100px;
+    font-size:2.5rem;
+    z-index:9999;
     pointer-events:none;
-
-    animation:pulse 8s infinite;
-}
-
-@keyframes pulse{
-    0%,100%{
-        transform:scale(1);
-    }
-    50%{
-        transform:scale(1.3);
-    }
+    filter:drop-shadow(0 0 10px rgba(255,255,255,0.6));
 }
 
 @media(max-width:768px){
@@ -237,6 +232,10 @@ h1{
     .card{
         padding:35px;
     }
+
+    #train{
+        font-size:1.8rem;
+    }
 }
 </style>
 </head>
@@ -244,37 +243,41 @@ h1{
 
 <div class="glow"></div>
 
+<!-- RANDOM TRAIN -->
+<div id="train">🚂🚃🚃🚃</div>
+
 <section class="hero">
     <div class="card">
 
         <div class="avatar"></div>
 
-        <h1>Lukas Imbusch</h1>
+        <h1>LukasImbusch</h1>
+
         <p class="subtitle">
-            Web Developer • Student • Creator
+            Developer • Creator • Student
         </p>
 
         <div class="buttons">
-            <a href="mailto:your@email.com" class="btn">
-                Contact Me
+            <a href="mailto:LukasImBusch.ch" class="btn">
+                Email Me
             </a>
 
-            <a href="https://github.com/yourusername"
+            <a href="https://github.com/lukasimbusch"
                target="_blank"
                class="btn">
-               GitHub
+                GitHub
             </a>
 
             <a href="https://linkedin.com"
                target="_blank"
                class="btn">
-               LinkedIn
+                LinkedIn
             </a>
 
             <a href="https://youtube.com"
                target="_blank"
                class="btn">
-               YouTube
+                YouTube
             </a>
         </div>
 
@@ -289,23 +292,17 @@ h1{
 
         <div class="project">
             <h3>Portfolio Website</h3>
-            <p>
-                Modern responsive portfolio with animations.
-            </p>
+            <p>Modern responsive website with animations.</p>
         </div>
 
         <div class="project">
             <h3>Discord Bot</h3>
-            <p>
-                Custom bot with commands and automation.
-            </p>
+            <p>Custom Discord bot with automation features.</p>
         </div>
 
         <div class="project">
-            <h3>Minecraft Project</h3>
-            <p>
-                Server tools and plugin development.
-            </p>
+            <h3>Minecraft Tools</h3>
+            <p>Server utilities and custom integrations.</p>
         </div>
 
     </div>
@@ -313,8 +310,46 @@ h1{
 </section>
 
 <div class="footer">
-    © 2026 Lukas Imbusch
+    © 2026 LukasImbusch
 </div>
+
+<script>
+const train = document.getElementById("train");
+
+let currentX = 100;
+let currentY = 100;
+
+function moveTrain() {
+
+    const maxX = window.innerWidth - 250;
+    const maxY = window.innerHeight - 100;
+
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
+
+    const angle =
+        Math.atan2(
+            newY - currentY,
+            newX - currentX
+        ) * (180 / Math.PI);
+
+    train.style.transition =
+        "left 5s ease-in-out, top 5s ease-in-out, transform 1s ease";
+
+    train.style.left = `${newX}px`;
+    train.style.top = `${newY}px`;
+    train.style.transform = `rotate(${angle}deg)`;
+
+    currentX = newX;
+    currentY = newY;
+}
+
+moveTrain();
+
+setInterval(() => {
+    moveTrain();
+}, 5000);
+</script>
 
 </body>
 </html>
