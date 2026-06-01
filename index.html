@@ -26,7 +26,10 @@ body{
     linear-gradient(135deg, #020617, #0f172a, #172554);
 }
 
-/* CENTER CARD */
+/* =========================
+   PORTFOLIO UI
+========================= */
+
 .hero{
     height:100vh;
     display:flex;
@@ -45,7 +48,6 @@ body{
     width:90%;
     max-width:850px;
     text-align:center;
-    z-index:10;
 }
 
 h1{font-size:3.5rem;}
@@ -74,37 +76,51 @@ h1{font-size:3.5rem;}
     box-shadow:0 0 25px rgba(59,130,246,0.6);
 }
 
-/* TRACK LAYER */
-#track{
-    position:fixed;
-    inset:0;
-    z-index:2;
-    pointer-events:none;
-}
+/* =========================
+   TRAIN
+========================= */
 
-/* TRAIN */
 #train{
     position:fixed;
-    width:90px;
-    height:40px;
-    z-index:9999;
+    width:140px;
+    height:60px;
+    z-index:20;
     pointer-events:none;
     transform-origin:center;
 }
 
-/* SVG STYLE */
+/* pixel train look */
 .train-svg{
     width:100%;
     height:100%;
     image-rendering:pixelated;
-    filter:drop-shadow(0 0 6px rgba(255,0,0,0.4));
+    filter:drop-shadow(0 0 8px rgba(255,0,0,0.4));
 }
+
+/* =========================
+   RAILWAY OVERLAY
+========================= */
+
+#railway{
+    position:fixed;
+    inset:0;
+    z-index:25; /* ABOVE everything */
+    pointer-events:none;
+    opacity:0;
+    transition:opacity 0.5s ease;
+}
+
+#railway.show{
+    opacity:1;
+}
+
 </style>
 </head>
 
 <body>
 
-<canvas id="track"></canvas>
+<!-- RAILWAY LAYER -->
+<canvas id="railway"></canvas>
 
 <div class="hero">
     <div class="card">
@@ -115,32 +131,41 @@ h1{font-size:3.5rem;}
             <a class="btn" href="mailto:your@email.com">Email</a>
             <a class="btn" href="https://github.com/yourusername">GitHub</a>
             <a class="btn" href="https://linkedin.com">LinkedIn</a>
-            <a class="btn" href="https://youtube.com">YouTube</a>
         </div>
     </div>
 </div>
 
-<!-- TRAIN -->
+<!-- PIXEL TRAIN (REAL SVG) -->
 <div id="train">
-<svg class="train-svg" viewBox="0 0 120 50">
-    <rect x="5" y="15" width="35" height="20" fill="#e11d48"/>
-    <rect x="10" y="10" width="20" height="10" fill="#991b1b"/>
-    <rect x="45" y="18" width="30" height="17" fill="#dc2626"/>
-    <rect x="80" y="18" width="30" height="17" fill="#dc2626"/>
+<svg class="train-svg" viewBox="0 0 160 70">
 
-    <circle cx="15" cy="38" r="4" fill="#0f172a"/>
-    <circle cx="30" cy="38" r="4" fill="#0f172a"/>
-    <circle cx="55" cy="38" r="4" fill="#0f172a"/>
-    <circle cx="90" cy="38" r="4" fill="#0f172a"/>
+    <!-- locomotive -->
+    <rect x="5" y="25" width="55" height="25" fill="#ef4444"/>
+    <rect x="10" y="15" width="25" height="15" fill="#991b1b"/>
+    <rect x="20" y="30" width="10" height="10" fill="#0f172a"/>
+
+    <!-- cabin -->
+    <rect x="60" y="28" width="40" height="22" fill="#dc2626"/>
+
+    <!-- wagons -->
+    <rect x="105" y="28" width="40" height="22" fill="#b91c1c"/>
+
+    <!-- wheels -->
+    <circle cx="20" cy="55" r="5" fill="#0f172a"/>
+    <circle cx="45" cy="55" r="5" fill="#0f172a"/>
+    <circle cx="75" cy="55" r="5" fill="#0f172a"/>
+    <circle cx="120" cy="55" r="5" fill="#0f172a"/>
+    <circle cx="145" cy="55" r="5" fill="#0f172a"/>
+
 </svg>
 </div>
 
 <script>
 /* =========================
-   RANDOM RAILWAY GENERATOR
+   RAILWAY GENERATION
 ========================= */
 
-const canvas = document.getElementById("track");
+const canvas = document.getElementById("railway");
 const ctx = canvas.getContext("2d");
 
 function resize(){
@@ -150,25 +175,22 @@ function resize(){
 resize();
 window.addEventListener("resize", resize);
 
-/* create random loop points */
+/* pixel-style track points */
 function generateTrack(){
     const points = [];
-    const count = 8;
+    const count = 10;
 
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
+    const cx = window.innerWidth/2;
+    const cy = window.innerHeight/2;
 
-    const radius = Math.min(window.innerWidth, window.innerHeight) * 0.35;
+    const radius = Math.min(window.innerWidth, window.innerHeight) * 0.38;
 
     for(let i=0;i<count;i++){
         const angle = (i / count) * Math.PI * 2;
 
-        const jitterX = (Math.random()-0.5)*200;
-        const jitterY = (Math.random()-0.5)*200;
-
         points.push({
-            x: centerX + Math.cos(angle) * radius + jitterX,
-            y: centerY + Math.sin(angle) * radius + jitterY
+            x: cx + Math.cos(angle)*radius + (Math.random()-0.5)*120,
+            y: cy + Math.sin(angle)*radius + (Math.random()-0.5)*120
         });
     }
 
@@ -177,12 +199,12 @@ function generateTrack(){
 
 const track = generateTrack();
 
-/* draw track */
-function drawTrack(){
+/* draw pixel railway */
+function drawRailway(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    ctx.strokeStyle = "rgba(255,255,255,0.15)";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = "rgba(255,255,255,0.25)";
 
     ctx.beginPath();
     ctx.moveTo(track[0].x, track[0].y);
@@ -193,47 +215,65 @@ function drawTrack(){
 
     ctx.closePath();
     ctx.stroke();
+
+    /* sleepers (pixel ties) */
+    ctx.fillStyle = "rgba(255,255,255,0.15)";
+
+    for(let i=0;i<track.length;i++){
+        const p = track[i];
+        ctx.fillRect(p.x-6, p.y-6, 12, 12);
+    }
 }
 
-drawTrack();
+drawRailway();
 
 /* =========================
-   TRAIN MOVEMENT ON TRACK
+   RAILWAY FLASH EFFECT
+========================= */
+
+function flashRailway(){
+    canvas.classList.add("show");
+
+    setTimeout(()=>{
+        canvas.classList.remove("show");
+    },2000);
+}
+
+setInterval(flashRailway, 5000);
+flashRailway();
+
+/* =========================
+   TRAIN MOVEMENT
 ========================= */
 
 const train = document.getElementById("train");
 
 let t = 0;
 
-function lerp(a,b,t){
-    return a + (b-a)*t;
-}
+function lerp(a,b,t){ return a + (b-a)*t; }
 
-function getPoint(i){
-    return track[i % track.length];
-}
+function get(i){ return track[i % track.length]; }
 
 function animate(){
 
-    const speed = 0.0025;
-    t += speed;
+    t += 0.0025;
 
     const seg = Math.floor(t * track.length);
-    const localT = (t * track.length) % 1;
+    const local = (t * track.length) % 1;
 
-    const p1 = getPoint(seg);
-    const p2 = getPoint(seg+1);
+    const p1 = get(seg);
+    const p2 = get(seg+1);
 
-    const x = lerp(p1.x, p2.x, localT);
-    const y = lerp(p1.y, p2.y, localT);
+    const x = lerp(p1.x, p2.x, local);
+    const y = lerp(p1.y, p2.y, local);
 
     const dx = p2.x - p1.x;
     const dy = p2.y - p1.y;
 
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    const angle = Math.atan2(dy, dx) * 180/Math.PI;
 
-    train.style.left = `${x}px`;
-    train.style.top = `${y}px`;
+    train.style.left = x + "px";
+    train.style.top = y + "px";
     train.style.transform = `rotate(${angle}deg)`;
 
     requestAnimationFrame(animate);
