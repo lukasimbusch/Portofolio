@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LukasImbusch | Portfolio</title>
+<title>Lukas Imbusch | Portfolio</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -19,27 +19,19 @@ html{
     scroll-behavior:smooth;
 }
 
+/* DARK BLUE BACKGROUND */
 body{
     min-height:100vh;
+    overflow:hidden;
     color:white;
-    overflow-x:hidden;
-    background:linear-gradient(
-        -45deg,
-        #0f172a,
-        #1e293b,
-        #2563eb,
-        #7c3aed
-    );
-    background-size:400% 400%;
-    animation:gradientMove 15s ease infinite;
+
+    background:
+    radial-gradient(circle at top right, #1e3a8a 0%, transparent 30%),
+    radial-gradient(circle at bottom left, #2563eb 0%, transparent 35%),
+    linear-gradient(135deg, #020617, #0f172a, #172554);
 }
 
-@keyframes gradientMove{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
-}
-
+/* floating glow */
 .glow{
     position:fixed;
     width:500px;
@@ -47,7 +39,7 @@ body{
     background:#3b82f6;
     border-radius:50%;
     filter:blur(180px);
-    opacity:.15;
+    opacity:.12;
     top:-150px;
     right:-150px;
     pointer-events:none;
@@ -59,15 +51,16 @@ body{
     50%{transform:scale(1.3);}
 }
 
+/* CENTER LAYOUT */
 .hero{
-    min-height:100vh;
+    height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    text-align:center;
-    padding:20px;
+    position:relative;
 }
 
+/* GLASS CARD */
 .card{
     backdrop-filter:blur(15px);
     background:rgba(255,255,255,0.08);
@@ -76,46 +69,26 @@ body{
     padding:50px;
     width:90%;
     max-width:850px;
+    text-align:center;
+    z-index:10;
     animation:fadeUp 1.2s ease;
 }
 
 @keyframes fadeUp{
-    from{
-        opacity:0;
-        transform:translateY(50px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-.avatar{
-    width:140px;
-    height:140px;
-    border-radius:50%;
-    margin:auto;
-    margin-bottom:25px;
-    border:4px solid rgba(255,255,255,0.3);
-    background:url("https://via.placeholder.com/300") center/cover;
-    animation:float 4s ease-in-out infinite;
-}
-
-@keyframes float{
-    0%,100%{transform:translateY(0);}
-    50%{transform:translateY(-15px);}
+    from{opacity:0; transform:translateY(50px);}
+    to{opacity:1; transform:translateY(0);}
 }
 
 h1{
-    font-size:4rem;
+    font-size:3.5rem;
 }
 
 .subtitle{
-    color:#d8d8d8;
+    color:#cbd5e1;
     margin-top:10px;
-    font-size:1.2rem;
 }
 
+/* BUTTONS */
 .buttons{
     margin-top:40px;
     display:flex;
@@ -129,11 +102,11 @@ h1{
     overflow:hidden;
     text-decoration:none;
     color:white;
-    padding:15px 35px;
+    padding:14px 30px;
     border-radius:50px;
     background:rgba(255,255,255,0.12);
     border:1px solid rgba(255,255,255,0.2);
-    transition:all .35s ease;
+    transition:.35s;
 }
 
 .btn::before{
@@ -143,12 +116,7 @@ h1{
     left:-100%;
     width:100%;
     height:100%;
-    background:linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,0.4),
-        transparent
-    );
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);
     transition:.6s;
 }
 
@@ -157,198 +125,120 @@ h1{
 }
 
 .btn:hover{
-    transform:translateY(-6px) scale(1.07);
-    box-shadow:
-        0 0 20px rgba(255,255,255,.3),
-        0 0 50px rgba(37,99,235,.5);
+    transform:translateY(-6px) scale(1.06);
+    box-shadow:0 0 25px rgba(59,130,246,0.6);
 }
 
+/* PROJECTS */
 .projects{
-    padding:80px 20px;
-}
-
-.section-title{
-    text-align:center;
-    margin-bottom:50px;
-    font-size:2.5rem;
+    margin-top:60px;
 }
 
 .project-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:30px;
-    max-width:1200px;
-    margin:auto;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-top:20px;
 }
 
 .project{
-    backdrop-filter:blur(15px);
-    background:rgba(255,255,255,.08);
-    border-radius:20px;
-    padding:30px;
-    transition:.4s;
+    padding:20px;
+    border-radius:15px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.1);
+    transition:.3s;
 }
 
 .project:hover{
-    transform:
-        translateY(-10px)
-        rotateX(5deg)
-        rotateY(-5deg);
-
-    box-shadow:0 20px 40px rgba(0,0,0,.3);
+    transform:translateY(-8px) rotateX(5deg);
 }
 
-.project h3{
-    margin-bottom:15px;
-}
-
-.project p{
-    color:#d9d9d9;
-}
-
-.footer{
-    text-align:center;
-    padding:40px;
-    color:#ddd;
-}
-
-/* TRAIN */
-
+/* TRAIN ORBIT */
 #train{
-    position:fixed;
-    left:100px;
-    top:100px;
+    position:absolute;
     font-size:2.5rem;
-    z-index:9999;
+    z-index:5;
     pointer-events:none;
-    filter:drop-shadow(0 0 10px rgba(255,255,255,0.6));
+    transform-origin:center;
 }
 
+/* RESPONSIVE */
 @media(max-width:768px){
-    h1{
-        font-size:2.5rem;
-    }
-
-    .card{
-        padding:35px;
-    }
-
-    #train{
-        font-size:1.8rem;
-    }
+    h1{font-size:2.5rem;}
+    .card{padding:30px;}
 }
 </style>
 </head>
+
 <body>
 
 <div class="glow"></div>
 
-<!-- RANDOM TRAIN -->
-<div id="train">🚂🚃🚃🚃</div>
+<div class="hero">
 
-<section class="hero">
+    <!-- TRAIN -->
+    <div id="train">🚂🚃🚃🚃</div>
+
+    <!-- MAIN CARD -->
     <div class="card">
 
-        <div class="avatar"></div>
-
-        <h1>LukasImbusch</h1>
-
-        <p class="subtitle">
-            Developer • Creator • Student
-        </p>
+        <h1>Lukas Imbusch</h1>
+        <p class="subtitle">Developer • Student • Creator</p>
 
         <div class="buttons">
-            <a href="mailto:LukasImBusch.ch" class="btn">
-                Email Me
-            </a>
+            <a class="btn" href="mailto:your@email.com">Email</a>
+            <a class="btn" href="https://github.com/yourusername" target="_blank">GitHub</a>
+            <a class="btn" href="https://linkedin.com" target="_blank">LinkedIn</a>
+            <a class="btn" href="https://youtube.com" target="_blank">YouTube</a>
+        </div>
 
-            <a href="https://github.com/lukasimbusch"
-               target="_blank"
-               class="btn">
-                GitHub
-            </a>
+        <div class="projects">
+            <h2>Projects</h2>
+            <div class="project-grid">
 
-            <a href="https://linkedin.com"
-               target="_blank"
-               class="btn">
-                LinkedIn
-            </a>
+                <div class="project">
+                    Portfolio Website
+                </div>
 
-            <a href="https://youtube.com"
-               target="_blank"
-               class="btn">
-                YouTube
-            </a>
+                <div class="project">
+                    Discord Bot
+                </div>
+
+                <div class="project">
+                    Minecraft Tools
+                </div>
+
+            </div>
         </div>
 
     </div>
-</section>
-
-<section class="projects">
-
-    <h2 class="section-title">Projects</h2>
-
-    <div class="project-grid">
-
-        <div class="project">
-            <h3>Portfolio Website</h3>
-            <p>Modern responsive website with animations.</p>
-        </div>
-
-        <div class="project">
-            <h3>Discord Bot</h3>
-            <p>Custom Discord bot with automation features.</p>
-        </div>
-
-        <div class="project">
-            <h3>Minecraft Tools</h3>
-            <p>Server utilities and custom integrations.</p>
-        </div>
-
-    </div>
-
-</section>
-
-<div class="footer">
-    © 2026 LukasImbusch
 </div>
 
 <script>
 const train = document.getElementById("train");
 
-let currentX = 100;
-let currentY = 100;
+let angle = 0;
 
-function moveTrain() {
+function animate(){
 
-    const maxX = window.innerWidth - 250;
-    const maxY = window.innerHeight - 100;
+    angle += 0.012;
 
-    const newX = Math.random() * maxX;
-    const newY = Math.random() * maxY;
+    const radiusX = 480;
+    const radiusY = 320;
 
-    const angle =
-        Math.atan2(
-            newY - currentY,
-            newX - currentX
-        ) * (180 / Math.PI);
+    const x = Math.cos(angle) * radiusX;
+    const y = Math.sin(angle) * radiusY;
 
-    train.style.transition =
-        "left 5s ease-in-out, top 5s ease-in-out, transform 1s ease";
+    train.style.left = `calc(50% + ${x}px)`;
+    train.style.top = `calc(50% + ${y}px)`;
 
-    train.style.left = `${newX}px`;
-    train.style.top = `${newY}px`;
-    train.style.transform = `rotate(${angle}deg)`;
+    const rotation = (angle * 180 / Math.PI) + 90;
+    train.style.transform = `rotate(${rotation}deg)`;
 
-    currentX = newX;
-    currentY = newY;
+    requestAnimationFrame(animate);
 }
 
-moveTrain();
-
-setInterval(() => {
-    moveTrain();
-}, 5000);
+animate();
 </script>
 
 </body>
