@@ -1,197 +1,669 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seamless 3D Connected Train Portfolio</title>
+    <style>
+        /* --- Core Reset & 3D Stage Setup --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-<style>
-body{
-    margin:0;
-    height:100vh;
-    overflow:hidden;
-    background:linear-gradient(135deg,#020617,#0f172a,#172554);
-    font-family:Arial;
-    color:white;
-}
+        body {
+            background-color: #060814;
+            color: #e2e8f0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 2000px; 
+        }
 
-/* UI */
-.card{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    padding:40px;
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.15);
-    border-radius:20px;
-    backdrop-filter:blur(12px);
-    text-align:center;
-    z-index:5;
-}
+        /* --- Master 3D Viewport Matrix --- */
+        .scene3d {
+            position: relative;
+            width: 800px;
+            height: 800px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+            transform: rotateX(60deg) rotateZ(-40deg);
+        }
 
-/* TRAIN */
-#train{
-    position:fixed;
-    width:140px;
-    height:60px;
-    z-index:9999;
-    pointer-events:none;
-    transform-origin:center;
-}
+        /* --- THE 3D RAILWAY TRACK SYSTEM --- */
+        .railway-system {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            transform-style: preserve-3d;
+        }
 
-svg{
-    width:100%;
-    height:100%;
-    image-rendering:pixelated;
-}
+        .track-ballast {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, transparent 55%, #161e2e 56%, #0f172a 70%, transparent 71%);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,0.7);
+        }
 
-/* RAILS */
-#rails{
-    position:fixed;
-    inset:0;
-    z-index:20;
-    pointer-events:none;
-    opacity:0.35;
-}
-</style>
+        .track-ties {
+            position: absolute;
+            inset: 20px;
+            border-radius: 50%;
+            background: repeating-conic-gradient(
+                from 0deg,
+                #3b4252 0deg 1.2deg,
+                transparent 1.2deg 5deg
+            );
+            -webkit-mask: radial-gradient(circle, transparent 61%, black 62%, black 89%, transparent 90%);
+            mask: radial-gradient(circle, transparent 61%, black 62%, black 89%, transparent 90%);
+            transform: translateZ(2px);
+        }
+
+        .rail {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid #00f2fe;
+            box-shadow: 0 0 15px #00f2fe, inset 0 0 15px #00f2fe;
+            transform: translateZ(8px);
+        }
+        .rail.outer { inset: 48px; }
+        .rail.inner { inset: 72px; }
+
+
+        /* --- CENTRAL FLOATING PORTFOLIO CARD (SHIFTED SLIGHTLY MORE TO THE FRONT) --- */
+        .card-wrapper {
+            position: absolute;
+            width: 340px;
+            height: 440px;
+            transform-style: preserve-3d;
+            /* Updated translateY to -170px to pull the layout slightly more forward */
+            transform: rotateZ(40deg) rotateX(-60deg) translateZ(40px) translateY(-170px);
+            animation: cardFloat 5s ease-in-out infinite alternate;
+            z-index: 100;
+        }
+
+        @keyframes cardFloat {
+            0% { transform: rotateZ(40deg) rotateX(-60deg) translateZ(45px) translateY(-170px); }
+            100% { transform: rotateZ(40deg) rotateX(-60deg) translateZ(75px) translateY(-180px); }
+        }
+
+        .portfolio-card {
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 15, 30, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 24px;
+            padding: 35px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 40px 70px rgba(0,0,0,0.8);
+            transform-style: preserve-3d;
+        }
+
+        .card-content h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform: translateZ(45px);
+        }
+
+        .card-content h2 {
+            font-size: 0.95rem;
+            color: #00f2fe;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 6px;
+            transform: translateZ(35px);
+        }
+
+        .card-content p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-top: 30px;
+            transform: translateZ(25px);
+        }
+
+        /* --- Interactive Skills Matrix --- */
+        .skills-matrix {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+            transform: translateZ(30px);
+        }
+
+        .skill-btn {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            color: #e2e8f0;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .skill-btn:hover {
+            background: rgba(0, 242, 254, 0.15);
+            border-color: #00f2fe;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+            transform: scale(1.04);
+        }
+
+        .skill-btn.github {
+            border-color: rgba(46, 164, 79, 0.4);
+            color: #48ca64;
+        }
+        
+        .skill-btn.github:hover {
+            background: rgba(46, 164, 79, 0.2);
+            border-color: #2ea44f;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(46, 164, 79, 0.5);
+        }
+
+        /* --- Main Action Button --- */
+        .cta-action {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            color: #05070f;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 16px;
+            border-radius: 12px;
+            transform: translateZ(40px);
+            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .cta-action:hover {
+            transform: translateZ(45px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.6);
+            filter: brightness(1.1);
+        }
+
+
+        /* =========================================================
+           === SEAMLESSLY CONNECTED 3D CONVOY SYSTEM ===
+           ========================================================= */
+        
+        .orbit-pivot {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: trainRotateLoop 12s linear infinite;
+        }
+
+        .pivot-engine { animation-delay: 0s; }
+        .pivot-car1   { animation-delay: -11.522s; } 
+        .pivot-car2   { animation-delay: -11.044s; } 
+
+        @keyframes trainRotateLoop {
+            from { transform: rotateZ(0deg); }
+            to { transform: rotateZ(-360deg); }
+        }
+
+        .train-car-3d {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 60px;
+            height: 24px;
+            transform: translateY(-240px) translateZ(10px); 
+            transform-style: preserve-3d;
+        }
+
+        .face {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            box-sizing: border-box;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
+
+        .face-top    { width: 60px; height: 24px; margin-left: -30px; margin-top: -12px; transform: translateZ(11px); }
+        .face-bottom { width: 60px; height: 24px; margin-left: -30px; margin-top: -12px; transform: translateZ(-11px); }
+        .face-left   { width: 60px; height: 22px; margin-left: -30px; margin-top: -11px; transform: translateY(-12px) rotateX(90deg); }
+        .face-right  { width: 60px; height: 22px; margin-left: -30px; margin-top: -11px; transform: translateY(12px) rotateX(90deg); }
+        .face-front  { width: 24px; height: 22px; margin-left: -12px; margin-top: -11px; transform: translateX(30px) rotateY(90deg); }
+        .face-back   { width: 24px; height: 22px; margin-left: -12px; margin-top: -11px; transform: translateX(-30px) rotateY(90deg); }
+
+        .gangway-bellows {
+            position: absolute;
+            left: 50%; top: 50%;
+            width: 14px;
+            height: 20px;
+            margin-left: 28px; 
+            margin-top: -10px;
+            transform-style: preserve-3d;
+        }
+        .g-face {
+            position: absolute;
+            background: #11141a;
+            border: 1px solid #1f2330;
+        }
+        .g-top    { width: 14px; height: 20px; transform: translateZ(9px); }
+        .g-bottom { width: 14px; height: 20px; transform: translateZ(-9px); }
+        .g-left   { width: 14px; height: 18px; transform: translateY(-10px) rotateX(90deg); }
+        .g-right  { width: 14px; height: 18px; transform: translateY(10px) rotateX(90deg); }
+
+        .locomotive .face-top { background: #3b4252; }
+        .locomotive .face-left, .locomotive .face-right { background: #1e2530; }
+        
+        .locomotive .face-back { 
+            background: #ffffff; 
+            box-shadow: 0 0 25px 5px #00f2fe;
+            border: 1px solid #fff;
+        }
+        .locomotive .face-front { background: #0b0f19; }
+
+        .cabin-block {
+            position: absolute;
+            width: 25px;
+            height: 24px;
+            left: 0;
+            top: 0;
+            transform-style: preserve-3d;
+            transform: translateZ(11px);
+        }
+        .cabin-face {
+            position: absolute;
+            left: 50%; top: 50%;
+            background: #2e3440;
+            border: 1px solid rgba(0, 242, 254, 0.4);
+        }
+        .cab-top   { width: 25px; height: 24px; margin-left: -12.5px; margin-top: -12px; background: #434c5e; transform: translateZ(12px); }
+        .cab-left  { width: 25px; height: 12px; margin-left: -12.5px; margin-top: -6px; transform: translateY(-12px) rotateX(90deg) translateZ(6px); }
+        .cab-right { width: 25px; height: 12px; margin-left: -12.5px; margin-top: -6px; transform: translateY(12px) rotateX(90deg) translateZ(-6px); }
+        .cab-back  { width: 24px; height: 12px; margin-left: -12px; margin-top: -6px; background: #00f2fe; transform: translateX(-12.5px) rotateY(90deg); opacity: 0.8; }
+        .cab-front { width: 24px; height: 12px; margin-left: -12px; margin-top: -6px; transform: translateX(12.5px) rotateY(90deg); }
+
+        .passenger-car .face-top { background: #2e3440; }
+        .passenger-car .face-front, .passenger-car .face-back { background: #1a1f29; }
+        .passenger-car .face-left, .passenger-car .face-right {
+            background: linear-gradient(90deg, 
+                #1a1f29 12%, #00f2fe 18%, #00f2fe 38%, 
+                #1a1f29 44%, #00f2fe 50%, #00f2fe 70%, 
+                #1a1f29 76%, #00f2fe 82%, #00f2fe 94%, #1a1f29 100%);
+        }
+
+        .ambient-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.05) 0%, transparent 70%);
+            transform: translateZ(-5px);
+            pointer-events: none;
+        }
+    </style>
 </head>
-
 <body>
 
-<canvas id="rails"></canvas>
+    <div class="scene3d">
+        <div class="ambient-glow"></div>
 
-<div class="card">
-    <h1>Portfolio</h1>
-    <p>Random adaptive railway system</p>
-</div>
+        <div class="railway-system">
+            <div class="track-ballast"></div>
+            <div class="track-ties"></div>
+            <div class="rail outer"></div>
+            <div class="rail inner"></div>
+        </div>
 
-<div id="train">
-<svg viewBox="0 0 160 70">
-    <rect x="5" y="25" width="55" height="25" fill="#ef4444"/>
-    <rect x="60" y="28" width="40" height="22" fill="#dc2626"/>
-    <rect x="105" y="28" width="40" height="22" fill="#b91c1c"/>
+        <div class="orbit-pivot pivot-engine">
+            <div class="train-car-3d locomotive">
+                <div class="face face-top"></div>
+                <div class="face face-bottom"></div>
+                <div class="face face-left"></div>
+                <div class="face face-right"></div>
+                <div class="face face-front"></div>
+                <div class="face face-back"></div>
+                
+                <div class="cabin-block">
+                    <div class="cabin-face cab-top"></div>
+                    <div class="cabin-face cab-left"></div>
+                    <div class="cabin-face cab-right"></div>
+                    <div class="cabin-face cab-front"></div>
+                    <div class="cabin-face cab-back"></div>
+                </div>
+            </div>
+        </div>
 
-    <circle cx="20" cy="55" r="5" fill="#111827"/>
-    <circle cx="50" cy="55" r="5" fill="#111827"/>
-    <circle cx="85" cy="55" r="5" fill="#111827"/>
-    <circle cx="130" cy="55" r="5" fill="#111827"/>
-</svg>
-</div>
+        <div class="orbit-pivot pivot-car1">
+            <div class="train-car-3d passenger-car">
+                <div class="gangway-bellows">
+                    <div class="g-face g-top"></div>
+                    <div class="g-face g-bottom"></div>
+                    <div class="g-face g-left"></div>
+                    <div class="g-face g-right"></div>
+                </div>
+                <div class="face face-top"></div>
+                <div class="face face-bottom"></div>
+                <div class="face face-left"></div>
+                <div class="face face-right"></div>
+                <div class="face face-front"></div>
+                <div class="face face-back"></div>
+            </div>
+        </div>
 
-<script>
+        <div class="orbit-pivot pivot-car2">
+            <div class="train-car-3d passenger-car">
+                <div class="gangway-bellows">
+                    <div class="g-face g-top"></div>
+                    <div class="g-face g-bottom"></div>
+                    <div class="g-face g-left"></div>
+                    <div class="g-face g-right"></div>
+                </div>
+                <div class="face face-top"></div>
+                <div class="face face-bottom"></div>
+                <div class="face face-left"></div>
+                <div class="face face-right"></div>
+                <div class="face face-front"></div>
+                <div class="face face-back"></div>
+            </div>
+        </div>
 
-/* =========================
-   RANDOM RAIL SYSTEM (ONCE)
-========================= */
+        <div class="card-wrapper">
+            <div class="portfolio-card">
+                <div class="card-content">
+                    <h1>LukasImBusch</h1>
+                    <h2>Student in switzerland</h2>
+                    <p>Loves biking and gaming especially Minecraft. I also love to try out new things</p>
+                    
+                    <div class="skills-matrix">
+                        <a href="https://github.com/lukasimbusch" target="_blank" rel="noopener noreferrer" class="skill-btn github">
+                            <svg height="14" width="14" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 6px;">
+                                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                            </svg>
+                            GitHub
+                        </a>
+                            <a href="https://www.tiktok.com/@lukasimbusch" target="_blank" rel="noopener noreferrer" class="skill-btn tiktok">
+                            <svg height="14" width="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 6px;">
+                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.05 1.51 4.25 1.13 1.42 2.76 2.38 4.52 2.73v4.03c-1.63-.04-3.24-.54-4.59-1.47a7.92 7.92 0 0 1-1.44-1.3v7.41c.04 2.11-.6 4.23-1.89 5.86-1.58 2-4.04 3.12-6.57 3.01-2.48-.05-4.85-1.25-6.27-3.29-1.53-2.13-1.89-4.94-1-7.31.79-2.18 2.6-3.9 4.82-4.5 1.34-.37 2.76-.32 4.07.13v4.16c-.84-.36-1.78-.45-2.68-.24-1.32.27-2.47 1.21-2.93 2.47-.56 1.43-.2 3.1.91 4.18.99.98 2.45 1.41 3.82 1.14 1.41-.24 2.61-1.34 2.97-2.73.13-.53.16-1.09.15-1.64V0h.01z"/>
+                            </svg>
+                            TikTok
+                        </a>
+                            <a href="https://www.youtube.com/@LukasImBusch" target="_blank" rel="noopener noreferrer" class="skill-btn youtube">
+                            <svg height="14" width="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 6px;">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                            YouTube
+                        </a>
+                            <a href="https://instagram.com/lukasimbusch" target="_blank" rel="noopener noreferrer" class="skill-btn instagram">
+                            <svg height="14" width="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 6px;">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                            </svg>
+                            Instagram
+                        </a>
+                    </div>
+                </div>
 
-const canvas = document.getElementById("rails");
-const ctx = canvas.getContext("2d");
+                <a href="#connect" class="cta-action">CONNECT TO MATRIX</a>
+            </div>
+        </div>
 
-function resize(){
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-}
-resize();
-addEventListener("resize", resize);
+    </div>
+    <style>
+        /* CSS for the new digital matrix lines */
+        .matrix-line {
+            position: absolute;
+            width: 2px;
+            height: 150px;
+            top: -200px;
+            background: linear-gradient(to bottom, transparent, var(--line-color));
+            opacity: 0;
+            transform-style: preserve-3d;
+            animation: matrixFall var(--fall-duration) linear infinite, pulseGlow 2s ease-in-out infinite alternate;
+            animation-delay: var(--fall-delay);
+        }
 
-/* generate ONE stable rail network */
-function makeNodes(){
-    const nodes=[];
-    const count=14;
+        @keyframes matrixFall {
+            0% {
+                transform: translateY(0) translateZ(var(--z-pos));
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(900px) translateZ(var(--z-pos));
+                opacity: 0;
+            }
+        }
 
-    for(let i=0;i<count;i++){
-        nodes.push({
-            x:Math.random()*innerWidth,
-            y:Math.random()*innerHeight
+        @keyframes pulseGlow {
+            0% { filter: brightness(1) drop-shadow(0 0 2px var(--line-color)); }
+            100% { filter: brightness(1.8) drop-shadow(0 0 12px var(--line-color)); }
+        }
+    </style>
+
+    <style>
+        /* CSS for the hacker-styled data streams traveling front-to-back */
+        .matrix-line {
+            position: absolute;
+            /* Ultra-thin data lines for a digital laser appearance */
+            width: 1px;
+            height: 180px; 
+            left: calc(50% + var(--x-pos));
+            top: 50%;
+            background: linear-gradient(to bottom, transparent, var(--line-color));
+            opacity: 0;
+            transform-style: preserve-3d;
+            animation: matrixDepth var(--travel-duration) linear infinite, laserGlow 1s ease-in-out infinite alternate;
+            animation-delay: var(--travel-delay);
+        }
+
+        @keyframes matrixDepth {
+            0% {
+                transform: translateZ(var(--z-pos)) translateY(-700px) rotateX(90deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            80% { opacity: 1; }
+            100% {
+                transform: translateZ(var(--z-pos)) translateY(700px) rotateX(90deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes laserGlow {
+            0% { filter: brightness(1.2) drop-shadow(0 0 1px var(--line-color)); }
+            100% { filter: brightness(2.5) drop-shadow(0 0 8px var(--line-color)); }
+        }
+    </style>
+
+    <style>
+        /* --- Hacker Dynamic Running Code Streams --- */
+        .matrix-line {
+            position: absolute;
+            left: calc(50% + var(--x-pos));
+            /* Start positioned above the viewpoint boundary */
+            top: -200px;
+            color: var(--line-color);
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 900;
+            font-size: var(--font-size);
+            white-space: nowrap;
+            letter-spacing: 2px;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            opacity: 0;
+            transform-style: preserve-3d;
+            /* Anchors them at a fixed 3D depth layer while executing the vertical drop */
+            animation: matrixFall var(--travel-duration) linear infinite, terminalGlow 1s ease-in-out infinite alternate;
+            animation-delay: var(--travel-delay);
+            z-index: 1;
+        }
+
+        @keyframes matrixFall {
+            0% {
+                transform: translateZ(var(--z-pos)) translateY(0);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                /* Cascades straight down past the viewport baseline */
+                transform: translateZ(var(--z-pos)) translateY(1200px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes terminalGlow {
+            0% { 
+                filter: brightness(1.2) drop-shadow(0 0 2px var(--line-color)); 
+                text-shadow: 0 0 4px var(--line-color);
+            }
+            100% { 
+                filter: brightness(2.5) drop-shadow(0 0 8px var(--line-color));
+                text-shadow: 0 0 10px var(--line-color), 0 0 16px var(--line-color);
+            }
+        }
+
+        /* --- Hacker Card Transformation Theme --- */
+        .portfolio-card.hacker-mode {
+            background: rgba(0, 5, 0, 0.95) !important;
+            border: 2px solid #00ff66 !important;
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.4) !important;
+        }
+
+        .portfolio-card.hacker-mode h1 {
+            background: none !important;
+            -webkit-text-fill-color: initial !important;
+            color: #00ff66 !important;
+            font-family: 'Courier New', Courier, monospace;
+            text-shadow: 0 0 8px #00ff66;
+        }
+
+        .portfolio-card.hacker-mode h2 {
+            color: #33ff99 !important;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .portfolio-card.hacker-mode p {
+            color: #00dd55 !important;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .portfolio-card.hacker-mode .skill-btn {
+            background: rgba(0, 20, 5, 0.6) !important;
+            border: 1px solid #00ff66 !important;
+            color: #00ff66 !important;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .portfolio-card.hacker-mode .skill-btn:hover {
+            background: #00ff66 !important;
+            color: #000000 !important;
+            box-shadow: 0 0 15px #00ff66 !important;
+        }
+
+        .portfolio-card.hacker-mode .cta-action {
+            background: #00ff66 !important;
+            color: #000000 !important;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.5) !important;
+        }
+    </style>
+
+    <script>
+        let activeIntervals = [];
+
+        document.querySelector('.cta-action').addEventListener('click', function(e) {
+            e.preventDefault(); 
+            
+            const scene = document.querySelector('.scene3d');
+            const card = document.querySelector('.portfolio-card');
+            const btn = this;
+            
+            if (!scene || !card) return;
+
+            if (card.classList.contains('hacker-mode')) {
+                // ==========================================
+                // --- RETURN TO NORMAL MODE ---
+                // ==========================================
+                document.querySelectorAll('.matrix-line').forEach(line => line.remove());
+                activeIntervals.forEach(id => clearInterval(id));
+                activeIntervals = [];
+
+                card.classList.remove('hacker-mode');
+                btn.innerText = "CONNECT TO MATRIX";
+
+                document.querySelectorAll('.railway-system, .orbit-pivot, .ambient-glow').forEach(el => {
+                    el.style.display = '';
+                });
+
+            } else {
+                // ==========================================
+                // --- ENTER HACKER MODE ---
+                // ==========================================
+                document.querySelectorAll('.railway-system, .orbit-pivot, .ambient-glow').forEach(el => {
+                    el.style.display = 'none';
+                });
+
+                card.classList.add('hacker-mode');
+                btn.innerText = "DISCONNECT_FROM_MATRIX";
+
+                const totalLines = 100; 
+                const colors = ['#00ff66', '#33ff99', '#00ffcc'];
+                const cyberPool = [
+                    '01101001', '10011100', 'SYS_INIT_RUN', 'OVERRIDE_AUTH', 'FETCH_SECURE_CORE', 
+                    'BYPASS_FIREWALL', '001101', '111011', 'NET_ROOT_ACCESS', 'DECRYPT_STAGE_2'
+                ];
+
+                for (let i = 0; i < totalLines; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'matrix-line';
+                    
+                    line.innerText = cyberPool[Math.floor(Math.random() * cyberPool.length)];
+                    
+                    // X dispersion across coordinates, Z controls depth distance layers
+                    const randomX = Math.floor(Math.random() * 1600) - 800; 
+                    const randomZ = Math.floor(Math.random() * 600) - 300;  
+                    const duration = (Math.random() * 1.5 + 1.5).toFixed(2) + 's'; // Measured fall velocity
+                    const delay = (Math.random() * -4).toFixed(2) + 's';   
+                    const size = (Math.random() * 5 + 11) + 'px'; 
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+
+                    line.style.setProperty('--x-pos', `${randomX}px`);
+                    line.style.setProperty('--z-pos', `${randomZ}px`);
+                    line.style.setProperty('--travel-duration', duration);
+                    line.style.setProperty('--travel-delay', delay);
+                    line.style.setProperty('--font-size', size);
+                    line.style.setProperty('--line-color', color);
+
+                    scene.appendChild(line);
+
+                    const intervalId = setInterval(() => {
+                        if (Math.random() > 0.4) {
+                            line.innerText = cyberPool[Math.floor(Math.random() * cyberPool.length)];
+                        }
+                    }, Math.random() * 400 + 200);
+                    
+                    activeIntervals.push(intervalId);
+                }
+            }
         });
-    }
-    return nodes;
-}
-
-const nodes = makeNodes();
-
-/* connect nodes randomly (graph) */
-const edges=[];
-for(let i=0;i<nodes.length;i++){
-    const a=i;
-    const b=Math.floor(Math.random()*nodes.length);
-    if(a!==b) edges.push([a,b]);
-}
-
-/* draw rails */
-function draw(){
-    ctx.clearRect(0,0,innerWidth,innerHeight);
-
-    ctx.strokeStyle="rgba(255,255,255,0.2)";
-    ctx.lineWidth=3;
-
-    for(const [a,b] of edges){
-        ctx.beginPath();
-        ctx.moveTo(nodes[a].x,nodes[a].y);
-        ctx.lineTo(nodes[b].x,nodes[b].y);
-        ctx.stroke();
-    }
-
-    requestAnimationFrame(draw);
-}
-draw();
-
-
-/* =========================
-   TRAIN (SMOOTH RANDOM WALK)
-========================= */
-
-const train=document.getElementById("train");
-
-let current = Math.floor(Math.random()*nodes.length);
-let target = pickNext(current);
-
-let x=nodes[current].x;
-let y=nodes[current].y;
-
-function pickNext(from){
-    let options=[];
-    for(const [a,b] of edges){
-        if(a===from) options.push(b);
-        if(b===from) options.push(a);
-    }
-    if(options.length===0) return Math.floor(Math.random()*nodes.length);
-    return options[Math.floor(Math.random()*options.length)];
-}
-
-function animate(){
-
-    const tx = nodes[target].x;
-    const ty = nodes[target].y;
-
-    const dx = tx - x;
-    const dy = ty - y;
-
-    const dist = Math.hypot(dx,dy);
-
-    /* arrive → choose new random path */
-    if(dist < 2){
-        current = target;
-        target = pickNext(current);
-    }
-
-    /* smooth movement */
-    x += dx * 0.02;
-    y += dy * 0.02;
-
-    const angle = Math.atan2(dy,dx) * 180/Math.PI;
-
-    train.style.left = x + "px";
-    train.style.top = y + "px";
-    train.style.transform = `rotate(${angle}deg)`;
-
-    requestAnimationFrame(animate);
-}
-
-animate();
-
-</script>
-
+    </script>
 </body>
 </html>
