@@ -1,669 +1,588 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LukasImBusch Portofolio</title>
-    <style>
-        /* --- Core Reset & 3D Stage Setup --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — LukasImBusch</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #08080f;
+  --panel: #0f0f1a;
+  --accent: #e8c56d;
+  --accent2: #7eb8f7;
+  --text: #e8e8f0;
+  --muted: #5555888;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  overflow-x: hidden;
+}
 
-        body {
-            background-color: #060814;
-            color: #e2e8f0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            perspective: 2000px; 
-        }
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  display: flex; justify-content:flex-end; gap:32px;
+  padding: 26px 60px;
+  background: linear-gradient(to bottom, rgba(8,8,15,.95) 60%, transparent);
+}
+nav a {
+  font-size:.6rem; letter-spacing:4px; color:#5566aa;
+  text-decoration:none; text-transform:uppercase; transition:color .2s;
+}
+nav a:hover { color: var(--accent); }
 
-        /* --- Master 3D Viewport Matrix --- */
-        .scene3d {
-            position: relative;
-            width: 800px;
-            height: 800px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transform-style: preserve-3d;
-            transform: rotateX(60deg) rotateZ(-40deg);
-        }
+/* ── HERO ── */
+.hero {
+  position:relative; width:100%; height:100vh;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  overflow:hidden;
+}
 
-        /* --- THE 3D RAILWAY TRACK SYSTEM --- */
-        .railway-system {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            transform-style: preserve-3d;
-        }
+#canvas3d {
+  position:absolute; inset:0; width:100%; height:100%;
+  z-index:0;
+}
 
-        .track-ballast {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle, transparent 55%, #161e2e 56%, #0f172a 70%, transparent 71%);
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,0.7);
-        }
+.hero-content {
+  position:relative; z-index:2;
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center; pointer-events:none;
+  margin-bottom: 40px;
+}
 
-        .track-ties {
-            position: absolute;
-            inset: 20px;
-            border-radius: 50%;
-            background: repeating-conic-gradient(
-                from 0deg,
-                #3b4252 0deg 1.2deg,
-                transparent 1.2deg 5deg
-            );
-            -webkit-mask: radial-gradient(circle, transparent 61%, black 62%, black 89%, transparent 90%);
-            mask: radial-gradient(circle, transparent 61%, black 62%, black 89%, transparent 90%);
-            transform: translateZ(2px);
-        }
+.hero-content h1 {
+  font-family:'Bebas Neue', sans-serif;
+  font-size: clamp(4rem, 9vw, 8rem);
+  line-height:.88; letter-spacing:4px;
+  text-shadow: 0 0 60px rgba(126,184,247,.25);
+}
+.hero-content h1 span { color: var(--accent); display:block; }
+.hero-content p {
+  font-size:.68rem; letter-spacing:5px; color:#5566aa;
+  text-transform:uppercase; margin-top:14px;
+}
 
-        .rail {
-            position: absolute;
-            border-radius: 50%;
-            border: 3px solid #00f2fe;
-            box-shadow: 0 0 15px #00f2fe, inset 0 0 15px #00f2fe;
-            transform: translateZ(8px);
-        }
-        .rail.outer { inset: 48px; }
-        .rail.inner { inset: 72px; }
+.badge {
+  position:absolute; top:80px; right:60px; z-index:2;
+  font-size:.6rem; letter-spacing:3px; color:var(--accent);
+  border:1px solid rgba(232,197,109,.3); padding:8px 16px;
+  text-transform:uppercase; animation:blink 2s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
 
+.legend {
+  position:absolute; bottom:40px; left:0; right:0; z-index:2;
+  display:flex; justify-content:center; gap:60px; pointer-events:none;
+}
+.legend-item { font-size:.58rem; letter-spacing:3px; color:#5566aa; text-transform:uppercase; text-align:center; }
+.legend-item strong {
+  display:block; font-family:'Bebas Neue',sans-serif;
+  font-size:1.6rem; letter-spacing:2px; color:var(--text); margin-bottom:2px;
+}
 
-        /* --- CENTRAL FLOATING PORTFOLIO CARD (SHIFTED SLIGHTLY MORE TO THE FRONT) --- */
-        .card-wrapper {
-            position: absolute;
-            width: 340px;
-            height: 440px;
-            transform-style: preserve-3d;
-            /* Updated translateY to -170px to pull the layout slightly more forward */
-            transform: rotateZ(40deg) rotateX(-60deg) translateZ(40px) translateY(-170px);
-            animation: cardFloat 5s ease-in-out infinite alternate;
-            z-index: 100;
-        }
+/* ── SECTIONS ── */
+.divider { height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent); margin:0 60px; }
 
-        @keyframes cardFloat {
-            0% { transform: rotateZ(40deg) rotateX(-60deg) translateZ(45px) translateY(-170px); }
-            100% { transform: rotateZ(40deg) rotateX(-60deg) translateZ(75px) translateY(-180px); }
-        }
+section { padding:90px 60px; max-width:1100px; margin:0 auto; }
+.label { font-size:.6rem; letter-spacing:5px; color:var(--accent); text-transform:uppercase; margin-bottom:20px; }
+.label::before { content:'// '; color:#5566aa; }
+h2 { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,5vw,4rem); letter-spacing:2px; margin-bottom:44px; }
 
-        .portfolio-card {
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 15, 30, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            border-radius: 24px;
-            padding: 35px 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 40px 70px rgba(0,0,0,0.8);
-            transform-style: preserve-3d;
-        }
+/* Projects */
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:2px; }
+.card {
+  background:var(--panel); padding:34px 30px;
+  border:1px solid rgba(255,255,255,.04);
+  position:relative; overflow:hidden;
+  transition: border-color .3s, transform .3s; cursor:pointer;
+}
+.card:hover { border-color:rgba(232,197,109,.3); transform:translateY(-4px); }
+.card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:0; transition:opacity .3s;
+}
+.card:hover::before { opacity:1; }
+.card-num {
+  font-family:'Bebas Neue',sans-serif; font-size:3rem;
+  color:rgba(255,255,255,.04); position:absolute; top:14px; right:22px;
+}
+.card-tag { font-size:.58rem; letter-spacing:3px; color:var(--accent2); text-transform:uppercase; margin-bottom:12px; }
+.card-title { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:1px; margin-bottom:10px; }
+.card-desc { font-size:.7rem; line-height:1.75; color:#7777aa; }
+.card-link {
+  display:inline-block; margin-top:18px;
+  font-size:.58rem; letter-spacing:3px; color:var(--accent);
+  text-transform:uppercase; text-decoration:none;
+  border-bottom:1px solid rgba(232,197,109,.3); padding-bottom:2px;
+  transition:border-color .3s;
+}
+.card-link:hover { border-color:var(--accent); }
 
-        .card-content h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            transform: translateZ(45px);
-        }
+/* Skills */
+.skills { display:flex; flex-direction:column; gap:18px; }
+.sr { display:flex; align-items:center; gap:18px; }
+.sn { font-size:.62rem; letter-spacing:3px; color:#6677aa; text-transform:uppercase; width:150px; flex-shrink:0; }
+.sb { flex:1; height:2px; background:rgba(255,255,255,.06); }
+.sf {
+  height:100%; background:linear-gradient(90deg,var(--accent2),var(--accent));
+  box-shadow:0 0 6px var(--accent);
+  animation:grow .9s ease-out both;
+  transform-origin:left;
+}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.sp { font-size:.58rem; color:var(--accent); width:34px; text-align:right; }
 
-        .card-content h2 {
-            font-size: 0.95rem;
-            color: #00f2fe;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 6px;
-            transform: translateZ(35px);
-        }
+/* Contact */
+.btns { display:flex; gap:2px; flex-wrap:wrap; }
+.btn {
+  display:inline-flex; align-items:center; gap:10px;
+  padding:18px 30px; background:var(--panel);
+  border:1px solid rgba(255,255,255,.06);
+  color:var(--text); font-family:'DM Mono',monospace;
+  font-size:.66rem; letter-spacing:3px; text-transform:uppercase;
+  text-decoration:none; transition:background .3s, border-color .3s;
+}
+.btn:hover { background:rgba(232,197,109,.06); border-color:rgba(232,197,109,.3); color:var(--accent); }
 
-        .card-content p {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            line-height: 1.6;
-            margin-top: 30px;
-            transform: translateZ(25px);
-        }
-
-        /* --- Interactive Skills Matrix --- */
-        .skills-matrix {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 25px;
-            transform: translateZ(30px);
-        }
-
-        .skill-btn {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(0, 242, 254, 0.2);
-            color: #e2e8f0;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .skill-btn:hover {
-            background: rgba(0, 242, 254, 0.15);
-            border-color: #00f2fe;
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
-            transform: scale(1.04);
-        }
-
-        .skill-btn.github {
-            border-color: rgba(46, 164, 79, 0.4);
-            color: #48ca64;
-        }
-        
-        .skill-btn.github:hover {
-            background: rgba(46, 164, 79, 0.2);
-            border-color: #2ea44f;
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(46, 164, 79, 0.5);
-        }
-
-        /* --- Main Action Button --- */
-        .cta-action {
-            display: block;
-            text-align: center;
-            text-decoration: none;
-            background: linear-gradient(90deg, #00f2fe, #4facfe);
-            color: #05070f;
-            font-weight: 700;
-            font-size: 0.95rem;
-            padding: 16px;
-            border-radius: 12px;
-            transform: translateZ(40px);
-            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .cta-action:hover {
-            transform: translateZ(45px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.6);
-            filter: brightness(1.1);
-        }
-
-
-        /* =========================================================
-           === SEAMLESSLY CONNECTED 3D CONVOY SYSTEM ===
-           ========================================================= */
-        
-        .orbit-pivot {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            animation: trainRotateLoop 12s linear infinite;
-        }
-
-        .pivot-engine { animation-delay: 0s; }
-        .pivot-car1   { animation-delay: -11.522s; } 
-        .pivot-car2   { animation-delay: -11.044s; } 
-
-        @keyframes trainRotateLoop {
-            from { transform: rotateZ(0deg); }
-            to { transform: rotateZ(-360deg); }
-        }
-
-        .train-car-3d {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 60px;
-            height: 24px;
-            transform: translateY(-240px) translateZ(10px); 
-            transform-style: preserve-3d;
-        }
-
-        .face {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            box-sizing: border-box;
-            border: 1px solid rgba(0, 242, 254, 0.3);
-        }
-
-        .face-top    { width: 60px; height: 24px; margin-left: -30px; margin-top: -12px; transform: translateZ(11px); }
-        .face-bottom { width: 60px; height: 24px; margin-left: -30px; margin-top: -12px; transform: translateZ(-11px); }
-        .face-left   { width: 60px; height: 22px; margin-left: -30px; margin-top: -11px; transform: translateY(-12px) rotateX(90deg); }
-        .face-right  { width: 60px; height: 22px; margin-left: -30px; margin-top: -11px; transform: translateY(12px) rotateX(90deg); }
-        .face-front  { width: 24px; height: 22px; margin-left: -12px; margin-top: -11px; transform: translateX(30px) rotateY(90deg); }
-        .face-back   { width: 24px; height: 22px; margin-left: -12px; margin-top: -11px; transform: translateX(-30px) rotateY(90deg); }
-
-        .gangway-bellows {
-            position: absolute;
-            left: 50%; top: 50%;
-            width: 14px;
-            height: 20px;
-            margin-left: 28px; 
-            margin-top: -10px;
-            transform-style: preserve-3d;
-        }
-        .g-face {
-            position: absolute;
-            background: #11141a;
-            border: 1px solid #1f2330;
-        }
-        .g-top    { width: 14px; height: 20px; transform: translateZ(9px); }
-        .g-bottom { width: 14px; height: 20px; transform: translateZ(-9px); }
-        .g-left   { width: 14px; height: 18px; transform: translateY(-10px) rotateX(90deg); }
-        .g-right  { width: 14px; height: 18px; transform: translateY(10px) rotateX(90deg); }
-
-        .locomotive .face-top { background: #3b4252; }
-        .locomotive .face-left, .locomotive .face-right { background: #1e2530; }
-        
-        .locomotive .face-back { 
-            background: #ffffff; 
-            box-shadow: 0 0 25px 5px #00f2fe;
-            border: 1px solid #fff;
-        }
-        .locomotive .face-front { background: #0b0f19; }
-
-        .cabin-block {
-            position: absolute;
-            width: 25px;
-            height: 24px;
-            left: 0;
-            top: 0;
-            transform-style: preserve-3d;
-            transform: translateZ(11px);
-        }
-        .cabin-face {
-            position: absolute;
-            left: 50%; top: 50%;
-            background: #2e3440;
-            border: 1px solid rgba(0, 242, 254, 0.4);
-        }
-        .cab-top   { width: 25px; height: 24px; margin-left: -12.5px; margin-top: -12px; background: #434c5e; transform: translateZ(12px); }
-        .cab-left  { width: 25px; height: 12px; margin-left: -12.5px; margin-top: -6px; transform: translateY(-12px) rotateX(90deg) translateZ(6px); }
-        .cab-right { width: 25px; height: 12px; margin-left: -12.5px; margin-top: -6px; transform: translateY(12px) rotateX(90deg) translateZ(-6px); }
-        .cab-back  { width: 24px; height: 12px; margin-left: -12px; margin-top: -6px; background: #00f2fe; transform: translateX(-12.5px) rotateY(90deg); opacity: 0.8; }
-        .cab-front { width: 24px; height: 12px; margin-left: -12px; margin-top: -6px; transform: translateX(12.5px) rotateY(90deg); }
-
-        .passenger-car .face-top { background: #2e3440; }
-        .passenger-car .face-front, .passenger-car .face-back { background: #1a1f29; }
-        .passenger-car .face-left, .passenger-car .face-right {
-            background: linear-gradient(90deg, 
-                #1a1f29 12%, #00f2fe 18%, #00f2fe 38%, 
-                #1a1f29 44%, #00f2fe 50%, #00f2fe 70%, 
-                #1a1f29 76%, #00f2fe 82%, #00f2fe 94%, #1a1f29 100%);
-        }
-
-        .ambient-glow {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(0, 242, 254, 0.05) 0%, transparent 70%);
-            transform: translateZ(-5px);
-            pointer-events: none;
-        }
-    </style>
+footer {
+  padding:40px 60px; display:flex; justify-content:space-between;
+  font-size:.58rem; letter-spacing:3px; color:#5566aa; text-transform:uppercase;
+  max-width:1100px; margin:0 auto;
+}
+</style>
 </head>
 <body>
 
-    <div class="scene3d">
-        <div class="ambient-glow"></div>
+<nav>
+  <a href="#projects">Projects</a>
+  <a href="#skills">Skills</a>
+  <a href="#contact">Contact</a>
+</nav>
 
-        <div class="railway-system">
-            <div class="track-ballast"></div>
-            <div class="track-ties"></div>
-            <div class="rail outer"></div>
-            <div class="rail inner"></div>
-        </div>
+<div class="hero">
+  <canvas id="canvas3d"></canvas>
 
-        <div class="orbit-pivot pivot-engine">
-            <div class="train-car-3d locomotive">
-                <div class="face face-top"></div>
-                <div class="face face-bottom"></div>
-                <div class="face face-left"></div>
-                <div class="face face-right"></div>
-                <div class="face face-front"></div>
-                <div class="face face-back"></div>
-                
-                <div class="cabin-block">
-                    <div class="cabin-face cab-top"></div>
-                    <div class="cabin-face cab-left"></div>
-                    <div class="cabin-face cab-right"></div>
-                    <div class="cabin-face cab-front"></div>
-                    <div class="cabin-face cab-back"></div>
-                </div>
-            </div>
-        </div>
+  <div class="hero-content">
+    <h1>Lukas<span>Zuckschwert</span></h1>
+    <p>Vibe coder &amp; Gamer</p>
+  </div>
 
-        <div class="orbit-pivot pivot-car1">
-            <div class="train-car-3d passenger-car">
-                <div class="gangway-bellows">
-                    <div class="g-face g-top"></div>
-                    <div class="g-face g-bottom"></div>
-                    <div class="g-face g-left"></div>
-                    <div class="g-face g-right"></div>
-                </div>
-                <div class="face face-top"></div>
-                <div class="face face-bottom"></div>
-                <div class="face face-left"></div>
-                <div class="face face-right"></div>
-                <div class="face face-front"></div>
-                <div class="face face-back"></div>
-            </div>
-        </div>
+  <div class="badge">Available for Gaming </div>
 
-        <div class="orbit-pivot pivot-car2">
-            <div class="train-car-3d passenger-car">
-                <div class="gangway-bellows">
-                    <div class="g-face g-top"></div>
-                    <div class="g-face g-bottom"></div>
-                    <div class="g-face g-left"></div>
-                    <div class="g-face g-right"></div>
-                </div>
-                <div class="face face-top"></div>
-                <div class="face face-bottom"></div>
-                <div class="face face-left"></div>
-                <div class="face face-right"></div>
-                <div class="face face-front"></div>
-                <div class="face face-back"></div>
-            </div>
-        </div>
+  <div class="legend">
+    <div class="legend-item"><strong>6+</strong>Years Exp.</div>
+    <div class="legend-item"><strong>40+</strong>Projects</div>
+    <div class="legend-item"><strong>12</strong>Clients</div>
+  </div>
+</div>
 
-        <div class="card-wrapper">
-            <div class="portfolio-card">
-                <div class="card-content">
-                    <h1>LukasImBusch</h1>
-                    <h2>Student in switzerland</h2>
-                    <p>Loves biking and gaming especially Minecraft. I also love to try out new things</p>
-                    
-                    <div class="skills-matrix">
-                        <a href="https://github.com/lukasimbusch" target="_blank" rel="noopener noreferrer" class="skill-btn github">
-                            <svg height="14" width="14" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 6px;">
-                                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-                            </svg>
-                            GitHub
-                        </a>
-                            <a href="https://www.tiktok.com/@lukasimbusch" target="_blank" rel="noopener noreferrer" class="skill-btn tiktok">
-                            <svg height="14" width="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 6px;">
-                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.05 1.51 4.25 1.13 1.42 2.76 2.38 4.52 2.73v4.03c-1.63-.04-3.24-.54-4.59-1.47a7.92 7.92 0 0 1-1.44-1.3v7.41c.04 2.11-.6 4.23-1.89 5.86-1.58 2-4.04 3.12-6.57 3.01-2.48-.05-4.85-1.25-6.27-3.29-1.53-2.13-1.89-4.94-1-7.31.79-2.18 2.6-3.9 4.82-4.5 1.34-.37 2.76-.32 4.07.13v4.16c-.84-.36-1.78-.45-2.68-.24-1.32.27-2.47 1.21-2.93 2.47-.56 1.43-.2 3.1.91 4.18.99.98 2.45 1.41 3.82 1.14 1.41-.24 2.61-1.34 2.97-2.73.13-.53.16-1.09.15-1.64V0h.01z"/>
-                            </svg>
-                            TikTok
-                        </a>
-                            <a href="https://www.youtube.com/@LukasImBusch" target="_blank" rel="noopener noreferrer" class="skill-btn youtube">
-                            <svg height="14" width="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 6px;">
-                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                            </svg>
-                            YouTube
-                        </a>
-                            <a href="https://instagram.com/lukasimbusch" target="_blank" rel="noopener noreferrer" class="skill-btn instagram">
-                            <svg height="14" width="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 6px;">
-                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
-                            </svg>
-                            Instagram
-                        </a>
-                    </div>
-                </div>
-
-                <a href="#connect" class="cta-action">CONNECT TO MATRIX</a>
-            </div>
-        </div>
-
+<div class="divider"></div>
+<section id="projects">
+  <p class="label">Selected Work</p>
+  <h2>Projects</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="card-num">01</div>
+      <div class="card-tag">Project Name · 2026</div>
+      <div class="card-title">Project 1</div>
+      <p class="card-desc">Project desciption 1 </p>
+      <a class="card-link" href="test1.html">View Project →</a>
     </div>
-    <style>
-        /* CSS for the new digital matrix lines */
-        .matrix-line {
-            position: absolute;
-            width: 2px;
-            height: 150px;
-            top: -200px;
-            background: linear-gradient(to bottom, transparent, var(--line-color));
-            opacity: 0;
-            transform-style: preserve-3d;
-            animation: matrixFall var(--fall-duration) linear infinite, pulseGlow 2s ease-in-out infinite alternate;
-            animation-delay: var(--fall-delay);
-        }
+    
+    <div class="card">
+      <div class="card-num">02</div>
+      <div class="card-tag">Project name 2 · 2026</div>
+      <div class="card-title">Project 2</div>
+      <p class="card-desc">Project description 2</p>
+      <a class="card-link" href="test2.html">View Project →</a>
+    </div>
 
-        @keyframes matrixFall {
-            0% {
-                transform: translateY(0) translateZ(var(--z-pos));
-                opacity: 0;
-            }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% {
-                transform: translateY(900px) translateZ(var(--z-pos));
-                opacity: 0;
-            }
-        }
+    <div class="card">
+      <div class="card-num">03</div>
+      <div class="card-tag">Project name 3 · 2026</div>
+      <div class="card-title">Project 3</div>
+      <p class="card-desc">Project description 3</p>
+      <a class="card-link" href="test3.html">View Project →</a>
+    </div>
 
-        @keyframes pulseGlow {
-            0% { filter: brightness(1) drop-shadow(0 0 2px var(--line-color)); }
-            100% { filter: brightness(1.8) drop-shadow(0 0 12px var(--line-color)); }
-        }
-    </style>
+    <div class="card">
+      <div class="card-num">04</div>
+      <div class="card-tag">Project name 4 · 2026</div>
+      <div class="card-title">Project 4</div>
+      <p class="card-desc">Project description 4</p>
+      <a class="card-link" href="test4.html">View Project →</a>
+    </div>
 
-    <style>
-        /* CSS for the hacker-styled data streams traveling front-to-back */
-        .matrix-line {
-            position: absolute;
-            /* Ultra-thin data lines for a digital laser appearance */
-            width: 1px;
-            height: 180px; 
-            left: calc(50% + var(--x-pos));
-            top: 50%;
-            background: linear-gradient(to bottom, transparent, var(--line-color));
-            opacity: 0;
-            transform-style: preserve-3d;
-            animation: matrixDepth var(--travel-duration) linear infinite, laserGlow 1s ease-in-out infinite alternate;
-            animation-delay: var(--travel-delay);
-        }
+    <div class="card">
+      <div class="card-num">05</div>
+      <div class="card-tag">Project name 5</div>
+      <div class="card-title">Project 5</div>
+      <p class="card-desc">Project description 5</p>
+      <a class="card-link" href="test5.html">View Project →</a>
+    </div>
 
-        @keyframes matrixDepth {
-            0% {
-                transform: translateZ(var(--z-pos)) translateY(-700px) rotateX(90deg);
-                opacity: 0;
-            }
-            10% { opacity: 1; }
-            80% { opacity: 1; }
-            100% {
-                transform: translateZ(var(--z-pos)) translateY(700px) rotateX(90deg);
-                opacity: 0;
-            }
-        }
+    <div class="card">
+      <div class="card-num">06</div>
+      <div class="card-tag">project name 6· 2026</div>
+      <div class="card-title">Project 6</div>
+      <p class="card-desc">Project description 6</p>
+      <a class="card-link" href="test6.html">View Project →</a>
+    </div>
+  </div>
+</section>
 
-        @keyframes laserGlow {
-            0% { filter: brightness(1.2) drop-shadow(0 0 1px var(--line-color)); }
-            100% { filter: brightness(2.5) drop-shadow(0 0 8px var(--line-color)); }
-        }
-    </style>
+<div class="divider"></div>
+<section id="skills">
+  <p class="label">Toolkit</p>
+  <h2>Skills</h2>
+  <div class="skills">
+    <div class="sr"><span class="sn">TypeScript</span><div class="sb"><div class="sf" style="width:95%"></div></div><span class="sp">95%</span></div>
+    <div class="sr"><span class="sn">React / Next</span><div class="sb"><div class="sf" style="width:92%"></div></div><span class="sp">92%</span></div>
+    <div class="sr"><span class="sn">Node.js</span><div class="sb"><div class="sf" style="width:88%"></div></div><span class="sp">88%</span></div>
+    <div class="sr"><span class="sn">WebGL / Three</span><div class="sb"><div class="sf" style="width:80%"></div></div><span class="sp">80%</span></div>
+    <div class="sr"><span class="sn">Rust / WASM</span><div class="sb"><div class="sf" style="width:70%"></div></div><span class="sp">70%</span></div>
+    <div class="sr"><span class="sn">PostgreSQL</span><div class="sb"><div class="sf" style="width:85%"></div></div><span class="sp">85%</span></div>
+    <div class="sr"><span class="sn">DevOps / K8s</span><div class="sb"><div class="sf" style="width:75%"></div></div><span class="sp">75%</span></div>
+  </div>
+</section>
 
-    <style>
-        /* --- Hacker Dynamic Running Code Streams --- */
-        .matrix-line {
-            position: absolute;
-            left: calc(50% + var(--x-pos));
-            /* Start positioned above the viewpoint boundary */
-            top: -200px;
-            color: var(--line-color);
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: 900;
-            font-size: var(--font-size);
-            white-space: nowrap;
-            letter-spacing: 2px;
-            writing-mode: vertical-rl;
-            text-orientation: upright;
-            opacity: 0;
-            transform-style: preserve-3d;
-            /* Anchors them at a fixed 3D depth layer while executing the vertical drop */
-            animation: matrixFall var(--travel-duration) linear infinite, terminalGlow 1s ease-in-out infinite alternate;
-            animation-delay: var(--travel-delay);
-            z-index: 1;
-        }
+<div class="divider"></div>
+<section id="contact">
+  <p class="label">Get in Touch</p>
+  <h2>Let's Build Something</h2>
+  <div class="btns">
+    <a class="btn" href="mailto:Lukasimbusch@proton.me">✉Email Me</a>
+    <a class="btn" href="https://youtube.com/@LukasImBusch" target="_blank" rel="noopener noreferrer">◈YouTube</a>
+    <a class="btn" href="https://tiktok.com/@LukasImBusch" target="_blank" rel="noopener noreferrer">◈TikTok</a>
+    <a class="btn" href="https://instagram.com/lukasimbusch" target="_blank" rel="noopener noreferrer">◈Instagram</a>
+    <a class="btn" href="https://github.com/LukasImBusch" target="_blank" rel="noopener noreferrer">◈GitHub</a>
+  </div>
+</section>
 
-        @keyframes matrixFall {
-            0% {
-                transform: translateZ(var(--z-pos)) translateY(0);
-                opacity: 0;
-            }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% {
-                /* Cascades straight down past the viewport baseline */
-                transform: translateZ(var(--z-pos)) translateY(1200px);
-                opacity: 0;
-            }
-        }
+<div class="divider"></div>
+<footer>
+  <span>© 2025 LukasImBusch</span>
+  <span>Built with HTML · CSS · Three.js</span>
+</footer>
 
-        @keyframes terminalGlow {
-            0% { 
-                filter: brightness(1.2) drop-shadow(0 0 2px var(--line-color)); 
-                text-shadow: 0 0 4px var(--line-color);
-            }
-            100% { 
-                filter: brightness(2.5) drop-shadow(0 0 8px var(--line-color));
-                text-shadow: 0 0 10px var(--line-color), 0 0 16px var(--line-color);
-            }
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function() {
+  const canvas = document.getElementById('canvas3d');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-        /* --- Hacker Card Transformation Theme --- */
-        .portfolio-card.hacker-mode {
-            background: rgba(0, 5, 0, 0.95) !important;
-            border: 2px solid #00ff66 !important;
-            box-shadow: 0 0 30px rgba(0, 255, 102, 0.4) !important;
-        }
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x08080f, 0.045);
 
-        .portfolio-card.hacker-mode h1 {
-            background: none !important;
-            -webkit-text-fill-color: initial !important;
-            color: #00ff66 !important;
-            font-family: 'Courier New', Courier, monospace;
-            text-shadow: 0 0 8px #00ff66;
-        }
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
+  camera.position.set(0, 12, 16);
+  camera.lookAt(0, 0, 0);
 
-        .portfolio-card.hacker-mode h2 {
-            color: #33ff99 !important;
-            font-family: 'Courier New', Courier, monospace;
-        }
+  function resize() {
+    const w = canvas.parentElement.clientWidth;
+    const h = canvas.parentElement.clientHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
 
-        .portfolio-card.hacker-mode p {
-            color: #00dd55 !important;
-            font-family: 'Courier New', Courier, monospace;
-        }
+  // ── Lighting ──
+  scene.add(new THREE.AmbientLight(0x222244, 1.2));
 
-        .portfolio-card.hacker-mode .skill-btn {
-            background: rgba(0, 20, 5, 0.6) !important;
-            border: 1px solid #00ff66 !important;
-            color: #00ff66 !important;
-            font-family: 'Courier New', Courier, monospace;
-        }
+  const sunLight = new THREE.DirectionalLight(0xffeedd, 1.4);
+  sunLight.position.set(8, 16, 8);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.set(1024, 1024);
+  sunLight.shadow.camera.near = 0.5;
+  sunLight.shadow.camera.far = 60;
+  sunLight.shadow.camera.left = -15;
+  sunLight.shadow.camera.right = 15;
+  sunLight.shadow.camera.top = 15;
+  sunLight.shadow.camera.bottom = -15;
+  scene.add(sunLight);
 
-        .portfolio-card.hacker-mode .skill-btn:hover {
-            background: #00ff66 !important;
-            color: #000000 !important;
-            box-shadow: 0 0 15px #00ff66 !important;
-        }
+  const blueRim = new THREE.DirectionalLight(0x4488ff, 0.6);
+  blueRim.position.set(-10, 4, -8);
+  scene.add(blueRim);
 
-        .portfolio-card.hacker-mode .cta-action {
-            background: #00ff66 !important;
-            color: #000000 !important;
-            font-family: 'Courier New', Courier, monospace;
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.5) !important;
-        }
-    </style>
+  // ── Ground platform ──
+  const groundGeo = new THREE.CylinderGeometry(9, 9, 0.3, 64);
+  const groundMat = new THREE.MeshStandardMaterial({
+    color: 0x0d0d1e, metalness: 0.3, roughness: 0.8
+  });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.receiveShadow = true;
+  ground.position.y = -0.15;
+  scene.add(ground);
 
-    <script>
-        let activeIntervals = [];
+  const ringGeo = new THREE.TorusGeometry(9, 0.04, 8, 64);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0x2244aa });
+  scene.add(new THREE.Mesh(ringGeo, ringMat));
 
-        document.querySelector('.cta-action').addEventListener('click', function(e) {
-            e.preventDefault(); 
-            
-            const scene = document.querySelector('.scene3d');
-            const card = document.querySelector('.portfolio-card');
-            const btn = this;
-            
-            if (!scene || !card) return;
+  const gridHelper = new THREE.GridHelper(16, 16, 0x1a1a33, 0x111128);
+  scene.add(gridHelper);
 
-            if (card.classList.contains('hacker-mode')) {
-                // ==========================================
-                // --- RETURN TO NORMAL MODE ---
-                // ==========================================
-                document.querySelectorAll('.matrix-line').forEach(line => line.remove());
-                activeIntervals.forEach(id => clearInterval(id));
-                activeIntervals = [];
+  // ── Rails ──
+  const RAIL_R = 6.0;   
+  const RAIL_INNER = 5.6;
+  const TRACK_RADIUS = (RAIL_R + RAIL_INNER) / 2; 
 
-                card.classList.remove('hacker-mode');
-                btn.innerText = "CONNECT TO MATRIX";
+  function makeRailTorus(r, tube, color) {
+    const geo = new THREE.TorusGeometry(r, tube, 6, 80);
+    const mat = new THREE.MeshStandardMaterial({ color, metalness: 0.9, roughness: 0.2 });
+    const m = new THREE.Mesh(geo, mat);
+    m.rotation.x = Math.PI / 2;
+    return m;
+  }
+  scene.add(makeRailTorus(RAIL_R, 0.055, 0x8899cc));
+  scene.add(makeRailTorus(RAIL_INNER, 0.055, 0x8899cc));
 
-                document.querySelectorAll('.railway-system, .orbit-pivot, .ambient-glow').forEach(el => {
-                    el.style.display = '';
-                });
+  // ── Cross ties ──
+  for (let i = 0; i < 40; i++) {
+    const angle = (i / 40) * Math.PI * 2;
+    const geo = new THREE.BoxGeometry(0.72, 0.06, 0.18);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x3a3050, roughness: 0.9 });
+    const tie = new THREE.Mesh(geo, mat);
+    tie.position.set(Math.cos(angle) * TRACK_RADIUS, 0.03, Math.sin(angle) * TRACK_RADIUS);
+    tie.rotation.y = -angle;
+    tie.receiveShadow = true;
+    scene.add(tie);
+  }
 
-            } else {
-                // ==========================================
-                // --- ENTER HACKER MODE ---
-                // ==========================================
-                document.querySelectorAll('.railway-system, .orbit-pivot, .ambient-glow').forEach(el => {
-                    el.style.display = 'none';
-                });
+  // ── Central tower ──
+  const pillarGeo = new THREE.BoxGeometry(2.2, 3.5, 2.2);
+  const pillarMat = new THREE.MeshStandardMaterial({
+    color: 0x0e0e25, metalness: 0.4, roughness: 0.6,
+    emissive: 0x060618, emissiveIntensity: 1
+  });
+  const pillar = new THREE.Mesh(pillarGeo, pillarMat);
+  pillar.position.y = 1.75;
+  pillar.castShadow = true;
+  scene.add(pillar);
 
-                card.classList.add('hacker-mode');
-                btn.innerText = "DISCONNECT_FROM_MATRIX";
+  const capGeo = new THREE.BoxGeometry(2.5, 0.18, 2.5);
+  const capMat = new THREE.MeshStandardMaterial({ color: 0x7eb8f7, metalness: 0.8, roughness: 0.2, emissive: 0x2244aa, emissiveIntensity: 0.5 });
+  const cap = new THREE.Mesh(capGeo, capMat);
+  cap.position.y = 3.6;
+  scene.add(cap);
 
-                const totalLines = 100; 
-                const colors = ['#00ff66', '#33ff99', '#00ffcc'];
-                const cyberPool = [
-                    '01101001', '10011100', 'SYS_INIT_RUN', 'OVERRIDE_AUTH', 'FETCH_SECURE_CORE', 
-                    'BYPASS_FIREWALL', '001101', '111011', 'NET_ROOT_ACCESS', 'DECRYPT_STAGE_2'
-                ];
+  const towerLight = new THREE.PointLight(0x4488ff, 2, 6);
+  towerLight.position.set(0, 2, 0);
+  scene.add(towerLight);
 
-                for (let i = 0; i < totalLines; i++) {
-                    const line = document.createElement('div');
-                    line.className = 'matrix-line';
-                    
-                    line.innerText = cyberPool[Math.floor(Math.random() * cyberPool.length)];
-                    
-                    // X dispersion across coordinates, Z controls depth distance layers
-                    const randomX = Math.floor(Math.random() * 1600) - 800; 
-                    const randomZ = Math.floor(Math.random() * 600) - 300;  
-                    const duration = (Math.random() * 1.5 + 1.5).toFixed(2) + 's'; // Measured fall velocity
-                    const delay = (Math.random() * -4).toFixed(2) + 's';   
-                    const size = (Math.random() * 5 + 11) + 'px'; 
-                    const color = colors[Math.floor(Math.random() * colors.length)];
+  const accentRingGeo = new THREE.TorusGeometry(1.8, 0.04, 8, 48);
+  const accentRingMat = new THREE.MeshBasicMaterial({ color: 0xe8c56d });
+  const accentRing = new THREE.Mesh(accentRingGeo, accentRingMat);
+  accentRing.rotation.x = Math.PI / 2;
+  accentRing.position.y = 2.2;
+  scene.add(accentRing);
 
-                    line.style.setProperty('--x-pos', `${randomX}px`);
-                    line.style.setProperty('--z-pos', `${randomZ}px`);
-                    line.style.setProperty('--travel-duration', duration);
-                    line.style.setProperty('--travel-delay', delay);
-                    line.style.setProperty('--font-size', size);
-                    line.style.setProperty('--line-color', color);
+  // ── Mesh Helpers ──
+  function box(w, h, d, color, emissive = 0x000000, emissiveInt = 0) {
+    const g = new THREE.BoxGeometry(w, h, d);
+    const m = new THREE.MeshStandardMaterial({
+      color, metalness: 0.4, roughness: 0.55,
+      emissive, emissiveIntensity: emissiveInt
+    });
+    return new THREE.Mesh(g, m);
+  }
 
-                    scene.appendChild(line);
+  function cyl(rt, rb, h, segs, color) {
+    const g = new THREE.CylinderGeometry(rt, rb, h, segs);
+    const m = new THREE.MeshStandardMaterial({ color, metalness: 0.7, roughness: 0.3 });
+    return new THREE.Mesh(g, m);
+  }
 
-                    const intervalId = setInterval(() => {
-                        if (Math.random() > 0.4) {
-                            line.innerText = cyberPool[Math.floor(Math.random() * cyberPool.length)];
-                        }
-                    }, Math.random() * 400 + 200);
-                    
-                    activeIntervals.push(intervalId);
-                }
-            }
-        });
-    </script>
+  // Helper factory function to build matching coal tender wagons
+  function createCoalTender() {
+    const tenderGroup = new THREE.Group();
+
+    const tenderBody = box(1.3, 0.55, 0.85, 0x444455);
+    tenderBody.position.set(0, 0.275, 0);
+    tenderGroup.add(tenderBody);
+
+    const coal = box(1.1, 0.22, 0.7, 0x1a1a22);
+    coal.position.set(0, 0.66, 0);
+    tenderGroup.add(coal);
+
+    [-0.4, 0.4].forEach(x => {
+      [-0.5, 0.5].forEach(z => {
+        const tw = cyl(0.18, 0.18, 0.08, 16, 0x333344);
+        tw.rotation.z = Math.PI / 2;
+        tw.position.set(x, 0.18, z);
+        tenderGroup.add(tw);
+      });
+    });
+
+    return tenderGroup;
+  }
+
+  // ── VEHICLE 1: LOCOMOTIVE ──
+  const locomotive = new THREE.Group();
+  scene.add(locomotive);
+
+  const locoBody = box(1.4, 0.75, 0.9, 0xcc2211);
+  locoBody.position.set(0, 0.375, 0);
+  locomotive.add(locoBody);
+
+  const boiler = cyl(0.28, 0.3, 0.9, 16, 0xaa1a0a);
+  boiler.rotation.z = Math.PI / 2;
+  boiler.position.set(0.25, 0.72, 0);
+  locomotive.add(boiler);
+
+  const cab = box(0.7, 0.7, 0.88, 0x991a0a);
+  cab.position.set(-0.35, 1.1, 0);
+  locomotive.add(cab);
+
+  const winMat = new THREE.MeshStandardMaterial({ color: 0x7eb8f7, emissive: 0x2255aa, emissiveIntensity: 1.2 });
+  const winGeo = new THREE.BoxGeometry(0.05, 0.28, 0.3);
+  [-0.18, 0.18].forEach(z => {
+    const w = new THREE.Mesh(winGeo, winMat);
+    w.position.set(-0.35, 1.12, z);
+    locomotive.add(w);
+  });
+
+  const chimney = cyl(0.1, 0.12, 0.45, 12, 0x222222);
+  chimney.position.set(0.5, 1.1, 0);
+  locomotive.add(chimney);
+
+  const headlight = new THREE.Mesh(
+    new THREE.SphereGeometry(0.12, 16, 16),
+    new THREE.MeshStandardMaterial({ color: 0xffffcc, emissive: 0xffdd88, emissiveIntensity: 3 })
+  );
+  headlight.position.set(0.72, 0.5, 0);
+  locomotive.add(headlight);
+
+  const headlightPoint = new THREE.PointLight(0xffeeaa, 2.5, 4);
+  headlightPoint.position.set(0.9, 0.5, 0);
+  locomotive.add(headlightPoint);
+
+  const wheelPositions = [-0.4, 0.1, 0.55];
+  wheelPositions.forEach(x => {
+    [-0.52, 0.52].forEach(z => {
+      const wheel = cyl(0.22, 0.22, 0.08, 16, 0x333344);
+      wheel.rotation.z = Math.PI / 2;
+      wheel.position.set(x, 0.22, z);
+      locomotive.add(wheel);
+    });
+  });
+
+  const catcherGeo = new THREE.CylinderGeometry(0.0, 0.35, 0.4, 4);
+  const catcher = new THREE.Mesh(catcherGeo, new THREE.MeshStandardMaterial({ color: 0x882200, metalness: 0.5, roughness: 0.5 }));
+  catcher.rotation.z = -Math.PI / 2;
+  catcher.rotation.y = Math.PI / 4;
+  catcher.position.set(0.85, 0.18, 0);
+  locomotive.add(catcher);
+
+  // ── VEHICLES 2, 3, & 4: THREE MATCHING COAL TENDERS ──
+  const tender1 = createCoalTender();
+  const tender2 = createCoalTender();
+  const tender3 = createCoalTender();
+  
+  scene.add(tender1);
+  scene.add(tender2);
+  scene.add(tender3);
+
+  // Enable Shadows across all train cars
+  [locomotive, tender1, tender2, tender3].forEach(group => {
+    group.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
+  });
+
+  // ── Smoke Particles ──
+  const smokeParticles = [];
+  const smokeMat = new THREE.MeshBasicMaterial({ color: 0x8888aa, transparent: true, opacity: 0.35 });
+  for (let i = 0; i < 18; i++) {
+    const sg = new THREE.SphereGeometry(0.14, 5, 5);
+    const sm = new THREE.Mesh(sg, smokeMat.clone());
+    sm.userData.age = Math.random();
+    scene.add(sm);
+    smokeParticles.push(sm);
+  }
+
+  // ── Stars Background ──
+  const starGeo = new THREE.BufferGeometry();
+  const starVerts = [];
+  for (let i = 0; i < 600; i++) {
+    starVerts.push((Math.random() - 0.5) * 120, Math.random() * 60 + 5, (Math.random() - 0.5) * 120);
+  }
+  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starVerts, 3));
+  const starMat = new THREE.PointsMaterial({ color: 0xaabbdd, size: 0.08 });
+  scene.add(new THREE.Points(starGeo, starMat));
+
+  // ── Smooth Animation Math ──
+  let t = 0;
+  let camAngle = 0;
+
+  function positionVehicleOnTrack(vehicle, angularTime) {
+    const tx = Math.cos(angularTime) * TRACK_RADIUS;
+    const tz = Math.sin(angularTime) * TRACK_RADIUS;
+    vehicle.position.set(tx, 0.22, tz);
+    
+    // Smoothly align vehicle parallel to the rail vector curve
+    vehicle.rotation.y = -angularTime - Math.PI / 2;
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.006;        
+    camAngle += 0.0008; 
+
+    // Angular spacing distance couplings (approx 1.6 units between pivot centers)
+    const offset1 = 1.6 / TRACK_RADIUS;  
+    const offset2 = 3.2 / TRACK_RADIUS;   
+    const offset3 = 4.8 / TRACK_RADIUS;
+
+    // Track positioning updates for the extended train composition
+    positionVehicleOnTrack(locomotive, t);
+    positionVehicleOnTrack(tender1, t - offset1);
+    positionVehicleOnTrack(tender2, t - offset2);
+    positionVehicleOnTrack(tender3, t - offset3);
+
+    // Dynamic Vector Smoke Follow Loop
+    const chimneyLocal = new THREE.Vector3(0.5, 1.1, 0);
+    const chimneyWorld = chimneyLocal.clone().applyMatrix4(locomotive.matrixWorld);
+
+    smokeParticles.forEach((sp) => {
+      sp.userData.age += 0.012;
+      if (sp.userData.age > 1) {
+        sp.userData.age = 0;
+        sp.position.copy(chimneyWorld);
+      }
+      const a = sp.userData.age;
+      sp.position.y += 0.035;
+      sp.position.x += (Math.random() - 0.5) * 0.015;
+      sp.position.z += (Math.random() - 0.5) * 0.015;
+      sp.material.opacity = 0.4 * (1 - a);
+      sp.scale.setScalar(1 + a * 3);
+    });
+
+    // Ambient background cycles
+    towerLight.intensity = 1.5 + Math.sin(t * 2) * 0.5;
+    accentRing.position.y = 2.2 + Math.sin(t * 1.5) * 0.12;
+    accentRing.rotation.z = t * 0.4;
+    headlightPoint.intensity = 2.3 + Math.sin(t * 7) * 0.2;
+
+    camera.position.x = Math.sin(camAngle) * 2;
+    camera.position.z = 16 + Math.cos(camAngle) * 2;
+    camera.position.y = 12 + Math.sin(camAngle * 0.7) * 0.5;
+    camera.lookAt(0, 1, 0);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
 </body>
 </html>
