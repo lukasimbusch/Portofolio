@@ -3,31 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Page</title>
+    <title>Project 1</title>
+
     <style>
-        /* Center the text completely on the screen */
         body {
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
+            flex-direction: column; /* Stack items vertically */
             justify-content: center;
             align-items: center;
-            background-color: #f0f0f0; /* Light grey background */
+            background-color: #f0f0f0;
             font-family: Arial, sans-serif;
+            gap: 20px; /* Space between text and video */
         }
 
-        /* Style the big text */
         .big-text {
-            font-size: 10vw; /* Scales with the size of the window */
+            font-size: 10vw;
             font-weight: bold;
-            color: #333333; /* Dark grey color */
+            color: #333;
             text-transform: uppercase;
+        }
+
+        video {
+            max-width: 90%;
+            height: auto;
         }
     </style>
 </head>
 <body>
 
-    <div class="big-text">TEST 1</div>
+    <div class="big-text">Server</div>
+
+    <video width="640" controls>
+        <source src="ServerVid.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
 
 </body>
 </html>
