@@ -1,3 +1,2 @@
-# Portofolio
+# [Portofolio](https://lukasimbusch.ch/)
 Things about me
-Go [here](https://lukasimbusch.ch/)
