@@ -1,3 +1,3 @@
 # Portofolio
 Things about me
-Lukasimbusch.ch
+Go [here](https://lukasimbusch.ch/)
