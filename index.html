@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LukasImBusch // Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #090d16;
+        }
+        .bento-card {
+            background-color: #111726;
+            border: 1px solid #1f293d;
+        }
+    </style>
+</head>
+<body class="text-gray-200 font-sans antialiased flex flex-col items-center justify-center min-h-screen p-4 md:p-8">
+
+    <div class="max-w-4xl w-full space-y-4">
+        
+        <header class="bento-card rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-white">LukasImBusch</h1>
+                <p id="txt-subtitle" class="text-sm text-gray-400 mt-1">Developer, Creator & Systems</p>
+            </div>
+            
+            <div id="txt-badge" class="flex items-center gap-2 bg-emerald-950/50 border border-emerald-800/60 px-3 py-1.5 rounded-full text-xs font-medium text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                Network Systems Hub
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            <section class="bento-card rounded-2xl p-6 md:col-span-2 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center border-b border-gray-800/40 pb-3 relative">
+                        <span id="txt-dir-title" class="text-xs font-mono uppercase tracking-wider text-blue-400">Directory</span>
+                        
+                        <div class="relative inline-block text-left" id="lang-dropdown-wrapper">
+                            <button id="lang-dropdown-btn" onclick="toggleDropdown(event)" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-950/30 border border-blue-900/60 text-xs font-mono font-bold text-blue-400 hover:bg-blue-950/60 hover:text-white transition-all">
+                                <span>🌐</span>
+                                <span id="current-lang-label">ENGLISH</span>
+                                <span class="text-[10px] opacity-70 pointer-events-none transition-transform duration-200" id="dropdown-arrow">▼</span>
+                            </button>
+
+                            <div id="lang-dropdown-options" class="hidden absolute right-0 mt-2 w-32 rounded-xl bento-card shadow-xl z-50 overflow-hidden border border-blue-900/40">
+                                <div class="py-1 font-mono text-xs">
+                                    <button onclick="selectLanguage('en')" class="w-full text-left px-4 py-2 hover:bg-blue-950/40 hover:text-blue-400 transition-colors flex items-center justify-between text-gray-300">
+                                        <span>English</span>
+                                        <span id="check-en" class="text-blue-400 font-bold">✓</span>
+                                    </button>
+                                    <button onclick="selectLanguage('de')" class="w-full text-left px-4 py-2 hover:bg-blue-950/40 hover:text-blue-400 transition-colors flex items-center justify-between text-gray-300">
+                                        <span>Deutsch</span>
+                                        <span id="check-de" class="text-blue-400 font-bold hidden">✓</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p id="txt-bio" class="text-gray-300 mt-4 text-base leading-relaxed">
+                        Welcome to my central landing page. Explore my official social profiles and repositories on the right, or check out my ongoing creative projects featured below.
+                    </p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-gray-800/60 flex gap-4 text-xs font-mono text-gray-500">
+                    <div>HANDLE: @LukasImBusch</div>
+                    <div id="txt-env">ENVIRONMENT: Cloudflare</div>
+                </div>
+            </section>
+
+            <div class="bento-card rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <span id="txt-social-title" class="text-xs font-mono uppercase tracking-wider text-purple-400">Socials & Code</span>
+                    
+                    <div class="mt-4 space-y-2">
+                        <a href="https://github.com/LukasImBusch" target="_blank" rel="noopener noreferrer" class="flex justify-between items-center p-2.5 rounded-xl bg-gray-900/40 border border-gray-800/50 hover:border-blue-500/50 hover:bg-blue-950/10 transition-all group">
+                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">GitHub</span>
+                            <span class="text-xs font-mono text-gray-500 group-hover:text-blue-400">↗</span>
+                        </a>
+
+                        <a href="https://www.youtube.com/@LukasImBusch" target="_blank" rel="noopener noreferrer" class="flex justify-between items-center p-2.5 rounded-xl bg-gray-900/40 border border-gray-800/50 hover:border-red-500/50 hover:bg-red-950/10 transition-all group">
+                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">YouTube</span>
+                            <span class="text-xs font-mono text-gray-500 group-hover:text-red-400">↗</span>
+                        </a>
+
+                        <a href="https://www.tiktok.com/@LukasImBusch" target="_blank" rel="noopener noreferrer" class="flex justify-between items-center p-2.5 rounded-xl bg-gray-900/40 border border-gray-800/50 hover:border-cyan-500/50 hover:bg-cyan-950/10 transition-all group">
+                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">TikTok</span>
+                            <span class="text-xs font-mono text-gray-500 group-hover:text-cyan-400">↗</span>
+                        </a>
+
+                        <a href="https://www.instagram.com/LukasImBusch" target="_blank" rel="noopener noreferrer" class="flex justify-between items-center p-2.5 rounded-xl bg-gray-900/40 border border-gray-800/50 hover:border-pink-500/50 hover:bg-pink-950/10 transition-all group">
+                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">Instagram</span>
+                            <span class="text-xs font-mono text-gray-500 group-hover:text-pink-400">↗</span>
+                        </a>
+
+                        <a href="mailto:Lukasimbusch@proton.me" target="_blank" rel="noopener noreferrer" class="flex justify-between items-center p-2.5 rounded-xl bg-gray-900/40 border border-gray-800/50 hover:border-emerald-500/50 hover:bg-emerald-950/10 transition-all group">
+                            <span id="txt-email" class="text-sm font-medium text-gray-300 group-hover:text-white">Email</span>
+                            <span class="text-xs font-mono text-gray-500 group-hover:text-emerald-400">✉</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <a id="project-link" href="Cloud.html" class="bento-card rounded-2xl p-6 text-left md:col-span-3 flex flex-col md:flex-row md:items-center justify-between hover:border-blue-500/50 hover:bg-blue-950/10 transition-all group gap-4">
+                <div>
+                    <span id="txt-feat-title" class="text-xs font-mono uppercase tracking-wider text-blue-400">Featured Infrastructure</span>
+                    <h2 id="txt-feat-head" class="text-xl font-bold text-white mt-1 group-hover:text-blue-400 transition-colors">Cloud Environment Platform</h2>
+                    <p id="txt-feat-desc" class="text-gray-400 text-sm mt-1 max-w-2xl leading-relaxed">
+                        An overview of my self-hosted cloud configuration, active data architecture, and internal service management panels.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-mono text-gray-500 whitespace-nowrap bg-gray-900/50 border border-gray-800 px-3 py-2 rounded-xl group-hover:text-blue-400 group-hover:border-blue-500/30 transition-all">
+                    <span id="txt-feat-btn">VIEW DETAILS</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+            </a>
+
+        </main>
+
+        <footer class="flex justify-between items-center px-2 py-4 text-xs font-mono text-gray-600">
+            <div>© 2026 LukasImBusch</div>
+            <div id="txt-footer-status">STATUS: ONLINE</div>
+        </footer>
+
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                subtitle: "Developer, Creator & Systems",
+                badge: "<span class='w-2 h-2 rounded-full bg-emerald-400 animate-pulse'></span> Network Systems Hub",
+                dirTitle: "Directory",
+                bio: "Welcome to my central landing page. Explore my official social profiles and repositories on the right, or check out my ongoing creative projects featured below.",
+                env: "ENVIRONMENT: Cloudflare",
+                socialTitle: "Socials & Code",
+                email: "Email",
+                featTitle: "Featured Infrastructure",
+                featHead: "Cloud Environment Platform",
+                featDesc: "An overview of my self-hosted cloud configuration, active data architecture, and internal service management panels.",
+                featBtn: "VIEW DETAILS",
+                footerStatus: "STATUS: ONLINE",
+                currentLangText: "ENGLISH"
+            },
+            de: {
+                subtitle: "Entwickler, Creator & Systeme",
+                badge: "<span class='w-2 h-2 rounded-full bg-emerald-400 animate-pulse'></span> Netzwerk-System-Hub",
+                dirTitle: "Verzeichnis",
+                bio: "Willkommen auf meiner zentralen Landingpage. Entdecke meine offiziellen Social-Media-Profile und Repositories auf der rechten Seite oder sieh dir meine laufenden kreativen Projekte weiter unten an.",
+                env: "UMGEBUNG: Cloudflare",
+                socialTitle: "Socials & Code",
+                email: "E-Mail",
+                featTitle: "Hervorgehobene Infrastruktur",
+                featHead: "Cloud-Umgebungsplattform",
+                featDesc: "Eine Übersicht über meine selbstgehostete Cloud-Konfiguration, aktive Datenarchitektur und interne Service-Management-Panels.",
+                featBtn: "DETAILS ANZEIGEN",
+                footerStatus: "STATUS: ONLINE",
+                currentLangText: "DEUTSCH"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function updateUI() {
+            const lang = translations[currentLang];
+            
+            document.getElementById('txt-subtitle').innerText = lang.subtitle;
+            document.getElementById('txt-badge').innerHTML = lang.badge;
+            document.getElementById('txt-dir-title').innerText = lang.dirTitle;
+            document.getElementById('txt-bio').innerText = lang.bio;
+            document.getElementById('txt-env').innerText = lang.env;
+            document.getElementById('txt-social-title').innerText = lang.socialTitle;
+            document.getElementById('txt-email').innerText = lang.email;
+            document.getElementById('txt-feat-title').innerText = lang.featTitle;
+            document.getElementById('txt-feat-head').innerText = lang.featHead;
+            document.getElementById('txt-feat-desc').innerText = lang.featDesc;
+            document.getElementById('txt-feat-btn').innerText = lang.featBtn;
+            document.getElementById('txt-footer-status').innerText = lang.footerStatus;
+
+            document.getElementById('current-lang-label').innerText = lang.currentLangText;
+            document.getElementById('check-en').classList.toggle('hidden', currentLang !== 'en');
+            document.getElementById('check-de').classList.toggle('hidden', currentLang !== 'de');
+
+            // Pass active language state to Cloud.html link seamlessly
+            document.getElementById('project-link').href = `Cloud.html?lang=${currentLang}`;
+        }
+
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const options = document.getElementById('lang-dropdown-options');
+            const arrow = document.getElementById('dropdown-arrow');
+            
+            const isHidden = options.classList.contains('hidden');
+            options.classList.toggle('hidden', !isHidden);
+            arrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function selectLanguage(langCode) {
+            currentLang = langCode;
+            closeDropdown();
+            updateUI();
+        }
+
+        function closeDropdown() {
+            document.getElementById('lang-dropdown-options').classList.add('hidden');
+            document.getElementById('dropdown-arrow').style.transform = 'rotate(0deg)';
+        }
+
+        window.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('lang-dropdown-wrapper');
+            if (!wrapper.contains(e.target)) {
+                closeDropdown();
+            }
+        });
+
+        // Initialize language handling via URL or fallback
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialLang = urlParams.get('lang');
+            if (initialLang && translations[initialLang]) {
+                currentLang = initialLang;
+            }
+            updateUI();
+        });
+    </script>
+
+</body>
+</html>

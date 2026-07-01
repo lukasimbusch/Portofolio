@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Project // LukasImBusch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #090d16;
+        }
+        .bento-card {
+            background-color: #111726;
+            border: 1px solid #1f293d;
+        }
+    </style>
+</head>
+<body class="text-gray-200 font-sans antialiased flex flex-col items-center justify-center min-h-screen p-4 md:p-8">
+
+    <div class="max-w-2xl w-full space-y-4">
+        
+        <div class="flex justify-between items-center px-2">
+            <a id="back-btn" href="index.html" class="text-xs font-mono text-gray-400 hover:text-white transition-colors">
+                ← Back to Dashboard
+            </a>
+            <span class="text-xs font-mono text-gray-600">/projects/cloud</span>
+        </div>
+
+        <article class="bento-card rounded-2xl p-6 md:p-8 space-y-6">
+            
+            <div>
+                <span id="txt-doc-label" class="text-xs font-mono uppercase tracking-wider text-blue-400">Documentation</span>
+                <h1 id="txt-title" class="text-3xl font-bold text-white mt-2">Cloud Architecture</h1>
+                <p id="txt-subtitle" class="text-sm text-gray-400 mt-1">Details regarding deployment, maintenance, and utility paths.</p>
+            </div>
+
+            <hr class="border-gray-800">
+
+            <div class="space-y-4 text-gray-300 text-sm leading-relaxed">
+                <p id="txt-desc-p1">
+                    This ecosystem functions as my centralized node for syncing environments, compiling code bases, and organizing resources securely. 
+                </p>
+                
+                <h3 id="txt-stack-title" class="text-base font-bold text-white pt-2">Environment Stack</h3>
+                <p id="txt-desc-p2">
+                    The layout operates behind standard reverse proxy setups to ensure smooth continuous delivery and clean asset routing.
+                </p>
+
+                <div class="bg-gray-950/60 border border-gray-800 p-4 rounded-xl font-mono text-xs text-gray-400 space-y-1">
+                    <div id="txt-stats-title" class="text-blue-400 mb-2">// System Stats</div>
+                    <div id="txt-stat-1">• PROTOCOL: Secure HTTPS Layers</div>
+                    <div id="txt-stat-2">• BACKUP: Automated Shifting Schedules</div>
+                    <div id="txt-stat-3">• ENDPOINT: Active Mapping Matrix</div>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <a href="https://cloud.lukasimbusch.ch" target="_blank" rel="noopener noreferrer" class="flex justify-between items-center p-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium shadow-lg transition-all group">
+                    <span id="txt-launch-btn">Launch cloud.lukasimbusch.ch</span>
+                    <span class="font-mono group-hover:translate-x-1 transition-transform">↗</span>
+                </a>
+            </div>
+
+        </article>
+
+        <footer class="text-center text-xs font-mono text-gray-600 pt-2">
+            © 2026 LukasImBusch
+        </footer>
+
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                backBtn: "← Back to Dashboard",
+                docLabel: "Documentation",
+                title: "Cloud Architecture",
+                subtitle: "Details regarding deployment, maintenance, and utility paths.",
+                descP1: "This ecosystem functions as my centralized node for syncing environments, compiling code bases, and organizing resources securely.",
+                stackTitle: "Environment Stack",
+                descP2: "The layout operates behind standard reverse proxy setups to ensure smooth continuous delivery and clean asset routing.",
+                statsTitle: "// System Stats",
+                stat1: "• PROTOCOL: Secure HTTPS Layers",
+                stat2: "• BACKUP: Automated Shifting Schedules",
+                stat3: "• ENDPOINT: Active Mapping Matrix",
+                launchBtn: "Launch cloud.lukasimbusch.ch"
+            },
+            de: {
+                backBtn: "← Zurück zum Dashboard",
+                docLabel: "Dokumentation",
+                title: "Cloud-Architektur",
+                subtitle: "Details zu Deployment, Wartung und Utility-Pfaden.",
+                descP1: "Dieses Ökosystem fungiert als mein zentraler Knotenpunkt für die Synchronisierung von Umgebungen, das Kompilieren von Codebasen und die sichere Verwaltung von Ressourcen.",
+                stackTitle: "Technologie-Stack",
+                descP2: "Das System läuft hinter Standard-Reverse-Proxy-Konfigurationen, um eine reibungslose Bereitstellung und ein sauberes Asset-Routing zu gewährleisten.",
+                statsTitle: "// System-Statistiken",
+                stat1: "• PROTOKOLL: Sichere HTTPS-Ebenen",
+                stat2: "• BACKUP: Automatische Verschiebungspläne",
+                stat3: "• ENDPUNKT: Aktive Mapping-Matrix",
+                launchBtn: "cloud.lukasimbusch.ch starten"
+            }
+        };
+
+        function initializeLanguage() {
+            // Read language code parameter from URL (e.g. ?lang=de)
+            const urlParams = new URLSearchParams(window.location.search);
+            let langCode = urlParams.get('lang') || 'en';
+            
+            // Fallback if an unexpected code is used
+            if (!translations[langCode]) langCode = 'en';
+
+            const lang = translations[langCode];
+
+            // Render translated strings
+            document.getElementById('back-btn').innerText = lang.backBtn;
+            document.getElementById('back-btn').href = `index.html?lang=${langCode}`; // Keeps parameter alive going back
+            document.getElementById('txt-doc-label').innerText = lang.docLabel;
+            document.getElementById('txt-title').innerText = lang.title;
+            document.getElementById('txt-subtitle').innerText = lang.subtitle;
+            document.getElementById('txt-desc-p1').innerText = lang.descP1;
+            document.getElementById('txt-stack-title').innerText = lang.stackTitle;
+            document.getElementById('txt-desc-p2').innerText = lang.descP2;
+            document.getElementById('txt-stats-title').innerText = lang.statsTitle;
+            document.getElementById('txt-stat-1').innerText = lang.stat1;
+            document.getElementById('txt-stat-2').innerText = lang.stat2;
+            document.getElementById('txt-stat-3').innerText = lang.stat3;
+            document.getElementById('txt-launch-btn').innerText = lang.launchBtn;
+        }
+
+        window.addEventListener('DOMContentLoaded', initializeLanguage);
+    </script>
+
+</body>
+</html>
