@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LukasImBusch // Hub</title>
+    <title>Lukas Zuckschwert // Portofolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -21,7 +21,7 @@
         
         <header class="bento-card rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-white">LukasImBusch</h1>
+                <h1 class="text-2xl font-bold tracking-tight text-white">Lukas Zuckschwert</h1>
                 <p id="txt-subtitle" class="text-sm text-gray-400 mt-1">Developer, Creator & Systems</p>
             </div>
             
@@ -36,7 +36,7 @@
             <section class="bento-card rounded-2xl p-6 md:col-span-2 flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center border-b border-gray-800/40 pb-3 relative">
-                        <span id="txt-dir-title" class="text-xs font-mono uppercase tracking-wider text-blue-400">Directory</span>
+                        <span id="txt-dir-title" class="text-xs font-mono uppercase tracking-wider text-blue-400">About Me</span>
                         
                         <div class="relative inline-block text-left" id="lang-dropdown-wrapper">
                             <button id="lang-dropdown-btn" onclick="toggleDropdown(event)" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-950/30 border border-blue-900/60 text-xs font-mono font-bold text-blue-400 hover:bg-blue-950/60 hover:text-white transition-all">
@@ -61,8 +61,15 @@
                     </div>
 
                     <p id="txt-bio" class="text-gray-300 mt-4 text-base leading-relaxed">
-                        Welcome to my central landing page. Explore my official social profiles and repositories on the right, or check out my ongoing creative projects featured below.
+                        I’m a young developer who enjoys building systems, learning new tools, and turning ideas into practical projects.
                     </p>
+
+                    <div class="mt-4 bg-gradient-to-br from-blue-950/40 to-slate-900/70 border border-blue-900/40 p-4 rounded-2xl font-mono text-xs text-gray-400 shadow-inner space-y-1">
+                        <div id="txt-stats-title" class="text-blue-400 mb-2">// Quick Profile</div>
+                        <div id="txt-stat-1">• AGE: 17</div>
+                        <div id="txt-stat-2">• FROM: Germany</div>
+                        <div id="txt-stat-3">• CURRENTLY: Building projects & exploring cloud systems</div>
+                    </div>
                 </div>
                 <div class="mt-6 pt-4 border-t border-gray-800/60 flex gap-4 text-xs font-mono text-gray-500">
                     <div>HANDLE: @LukasImBusch</div>
@@ -120,7 +127,7 @@
         </main>
 
         <footer class="flex justify-between items-center px-2 py-4 text-xs font-mono text-gray-600">
-            <div>© 2026 LukasImBusch</div>
+            <div>© 2026 Lukas Zuckschwert</div>
             <div id="txt-footer-status">STATUS: ONLINE</div>
         </footer>
 
@@ -131,14 +138,18 @@
             en: {
                 subtitle: "Developer, Creator & Systems",
                 badge: "<span class='w-2 h-2 rounded-full bg-emerald-400 animate-pulse'></span> Network Systems Hub",
-                dirTitle: "Directory",
-                bio: "Welcome to my central landing page. Explore my official social profiles and repositories on the right, or check out my ongoing creative projects featured below.",
+                dirTitle: "About Me",
+                bio: "Welcome to My Portofolio here you can find my socials, my contact and my Projects.",
+                statsTitle: "// Quick Profile",
+                stat1: "• AGE: 15",
+                stat2: "• FROM: Switzerland",
+                stat3: "• CURRENTLY: Building projects & exploring cloud systems",
                 env: "ENVIRONMENT: Cloudflare",
                 socialTitle: "Socials & Code",
                 email: "Email",
                 featTitle: "Featured Infrastructure",
                 featHead: "Cloud Environment Platform",
-                featDesc: "An overview of my self-hosted cloud configuration, active data architecture, and internal service management panels.",
+                featDesc: "This is My self hosted Cloud Storage that runs on my server PC.",
                 featBtn: "VIEW DETAILS",
                 footerStatus: "STATUS: ONLINE",
                 currentLangText: "ENGLISH"
@@ -146,15 +157,19 @@
             de: {
                 subtitle: "Entwickler, Creator & Systeme",
                 badge: "<span class='w-2 h-2 rounded-full bg-emerald-400 animate-pulse'></span> Netzwerk-System-Hub",
-                dirTitle: "Verzeichnis",
-                bio: "Willkommen auf meiner zentralen Landingpage. Entdecke meine offiziellen Social-Media-Profile und Repositories auf der rechten Seite oder sieh dir meine laufenden kreativen Projekte weiter unten an.",
+                dirTitle: "Über mich",
+                bio: "Ich bin ein junger Entwickler, der gerne Systeme baut, neue Tools lernt und Ideen in praktische Projekte umsetzt.",
+                statsTitle: "// Kurzes Profil",
+                stat1: "• ALTER: 15",
+                stat2: "• HERKUNFT: Schweiz",
+                stat3: "• DERZEIT: Projekte bauen & Cloud-Systeme erkunden",
                 env: "UMGEBUNG: Cloudflare",
                 socialTitle: "Socials & Code",
                 email: "E-Mail",
                 featTitle: "Hervorgehobene Infrastruktur",
                 featHead: "Cloud-Umgebungsplattform",
-                featDesc: "Eine Übersicht über meine selbstgehostete Cloud-Konfiguration, aktive Datenarchitektur und interne Service-Management-Panels.",
-                featBtn: "DETAILS ANZEIGEN",
+                featDesc: "Das hiet ist mein eigener Cloud speicher der auf meinem server pc läuft.",
+                featBtn: "DETAILS ANSEHEN",
                 footerStatus: "STATUS: ONLINE",
                 currentLangText: "DEUTSCH"
             }
@@ -169,6 +184,10 @@
             document.getElementById('txt-badge').innerHTML = lang.badge;
             document.getElementById('txt-dir-title').innerText = lang.dirTitle;
             document.getElementById('txt-bio').innerText = lang.bio;
+            document.getElementById('txt-stats-title').innerText = lang.statsTitle;
+            document.getElementById('txt-stat-1').innerText = lang.stat1;
+            document.getElementById('txt-stat-2').innerText = lang.stat2;
+            document.getElementById('txt-stat-3').innerText = lang.stat3;
             document.getElementById('txt-env').innerText = lang.env;
             document.getElementById('txt-social-title').innerText = lang.socialTitle;
             document.getElementById('txt-email').innerText = lang.email;
